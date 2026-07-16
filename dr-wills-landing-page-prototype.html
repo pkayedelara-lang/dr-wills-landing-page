@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dr. Will's — Get Real About Sauce · Landing Prototype</title>
+<meta name="description" content="Mid-fidelity interactive landing page prototype for Dr. Will's — Get Real platform. Internal design exploration.">
+<link rel="stylesheet" href="https://use.typekit.net/bhf6iab.css">
+<style>
+/* ============================================================
+   DR. WILL'S — GET REAL  ·  LANDING PAGE PROTOTYPE
+   Mid-fidelity interactive prototype (single standalone file)
+   Internal design exploration — NOT the final ecommerce build.
+   Section order: offer / hero / ingredient-bridge / ticker /
+   reconsider-sauce / label-comparison / founder-story /
+   why-dr-wills / range-explorer / build-your-box /
+   customer-reviews / recipes / press / faq / final-cta / footer
+   ============================================================ */
+
+/* ---------- DESIGN TOKENS ---------- */
+:root{
+  /* Primary brand palette — approved design-system values */
+  --pink:#E78595;
+  --pink-deep:#C45E74;
+  --pink-soft:#F1B9C3;
+  --pink-wash:#FCEAED;
+  --red:#C81E3A;          /* sriracha red */
+  --black:#111111;
+  --true-black:#000000;
+  --ink:#111111;
+  --white:#FFFFFF;
+  --cream:#FDF5F1;
+  --soft-white:#F7F5F0;
+  --paper:#FDF5F1;
+  --paper-2:#F7F5F0;
+  --border-c:#D9D9D9;
+  --muted:#666666;
+  --line:rgba(0,0,0,.12);
+
+  /* Flavour colours (used only on their own products) */
+  --f-ketchup:#E78595;
+  --f-bbq:#F78D22;
+  --f-buffalo:#FFD600;
+  --f-sriracha:#C81E3A;
+  --f-avocado:#7AC143;
+  --f-classic:#F4B428;
+  --f-olive:#75871D;
+  --f-srirachamayo:#FF9E6D;
+  --f-chipotle:#C16353;
+
+  /* Type — official Adobe Fonts kit (Typekit link in <head>), Inter as browser fallback only */
+  --display:"paralucent-condensed", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  --body:"paralucent", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+
+  /* Layout */
+  --pad:clamp(20px,5vw,80px);
+  --maxw:1240px;
+  --r:22px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+
+/* ---------- RESET / BASE ---------- */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:var(--body);
+  font-weight:400;
+  color:var(--ink);
+  background:var(--white);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  line-height:1.5;
+  overflow-x:hidden;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+h1,h2,h3,h4{margin:0;font-family:var(--display);font-weight:700;line-height:.92;text-transform:uppercase;letter-spacing:.005em}
+p{margin:0 0 1em}
+:focus-visible{outline:3px solid var(--pink-deep);outline-offset:3px}
+
+/* Type scale */
+.display-xl{font-size:clamp(3.2rem,9vw,7.3rem);letter-spacing:-.015em}
+.display-l{font-size:clamp(2.6rem,6.5vw,5.3rem);letter-spacing:-.01em}
+.display-m{font-size:clamp(2rem,4.6vw,3.6rem)}
+.display-s{font-size:clamp(1.5rem,3vw,2.2rem)}
+.eyebrow{
+  font-family:var(--display);font-weight:700;text-transform:uppercase;
+  letter-spacing:.18em;font-size:.76rem;color:var(--pink-deep);
+}
+.lead{font-size:clamp(1.05rem,1.6vw,1.28rem);line-height:1.55;max-width:44ch}
+.small{font-size:.86rem}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+section{position:relative}
+
+/* ---------- BUTTONS ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5em;
+  font-family:var(--display);font-weight:700;text-transform:uppercase;
+  letter-spacing:.03em;font-size:.92rem;line-height:1;
+  padding:.95em 1.6em;border-radius:8px;border:2px solid var(--black);
+  transition:transform .2s var(--ease),background .2s,color .2s,border-color .2s;
+  white-space:nowrap;min-height:44px;
+}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn:focus-visible{outline-offset:4px}
+.btn-primary{background:var(--black);color:#fff;border-color:var(--black)}
+.btn-primary:hover{background:var(--pink-deep);border-color:var(--pink-deep);transform:translateY(-2px)}
+.btn-pink{background:var(--pink);color:#000;border-color:var(--black)}
+.btn-pink:hover{background:#000;color:#fff;transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:inherit;border-color:currentColor}
+.btn-ghost:hover{background:var(--black);color:#fff;border-color:#000}
+.btn-white{background:#fff;color:#000;border-color:var(--black)}
+.btn-white:hover{background:var(--pink);transform:translateY(-2px)}
+.btn .arw{transition:transform .25s var(--ease)}
+.btn:hover .arw{transform:translateX(4px)}
+
+/* ---------- 1 · LIMITED-TIME OFFER BAR ---------- */
+.offer-bar{background:var(--pink);padding:9px 0}
+.offer-bar .ob-inner{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;text-align:center;row-gap:8px}
+.offer-bar .ob-msg{font-family:var(--display);color:#fff;font-weight:700;text-transform:uppercase;letter-spacing:.03em;font-size:.82rem;display:inline-block;min-height:26px;line-height:1.35;max-width:100%}
+.offer-bar .ob-msg:hover{opacity:.85}
+.ob-timer{display:flex;align-items:center;gap:6px}
+.ob-sep{color:#fff;font-weight:700}
+.ob-unit{display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;color:var(--pink-deep);border-radius:8px;min-width:44px;padding:4px 6px;line-height:1}
+.ob-num{font-family:var(--display);font-weight:700;font-size:.92rem;line-height:1;color:var(--pink-deep)}
+.ob-lbl{display:block;font-family:var(--body);font-weight:700;text-transform:uppercase;font-size:.5rem;letter-spacing:.04em;margin-top:2px;color:var(--pink-deep);opacity:.9}
+@media(max-width:560px){
+  .ob-unit{min-width:40px;padding:4px 5px}
+  .ob-num{font-size:.82rem}
+  .ob-lbl{font-size:.46rem}
+  .offer-bar .ob-msg{font-size:.7rem;display:block;width:100%;text-align:center}
+  .offer-bar .ob-timer{justify-content:center;width:100%}
+}
+
+/* ---------- NAV ---------- */
+.nav{position:sticky;top:0;z-index:80;background:var(--black);color:#fff;}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;height:68px;}
+.nav-logo img{height:34px;width:auto;filter:brightness(0) invert(1)}
+.nav-links{display:flex;align-items:center;gap:30px}
+.nav-links a{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:.86rem;opacity:.82;transition:opacity .2s,color .2s;padding:6px 0;position:relative;}
+.nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:-2px;height:2px;background:var(--pink);transition:right .3s var(--ease)}
+.nav-links a:hover{opacity:1}
+.nav-links a:hover::after{right:0}
+.nav-cta{display:flex;align-items:center;gap:14px}
+.nav-cta .btn{padding:.7em 1.15em;font-size:.78rem}
+.nav-cart{background:none;border:0;padding:8px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#fff}
+.nav-cart svg{width:22px;height:22px}
+.burger{display:none;background:none;border:0;padding:8px;width:44px;height:44px}
+.burger span{display:block;height:2.5px;background:#fff;border-radius:3px;margin:5px 0;transition:.3s var(--ease)}
+
+/* Mobile menu */
+.mobile-menu{position:fixed;inset:0 0 0 auto;width:min(84vw,360px);z-index:90;background:var(--black);color:#fff;transform:translateX(105%);transition:transform .4s var(--ease);padding:90px 30px 30px;display:flex;flex-direction:column;gap:6px;box-shadow:-20px 0 60px rgba(0,0,0,.4);}
+.mobile-menu.open{transform:translateX(0)}
+.mobile-menu a{font-family:var(--display);font-size:2rem;text-transform:uppercase;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.14)}
+.mobile-menu .btn{margin-top:20px}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);opacity:0;visibility:hidden;transition:.35s;z-index:85}
+.scrim.on{opacity:1;visibility:visible}
+
+/* ---------- FLOATING DECOR ICONS ---------- */
+.decor{position:absolute;pointer-events:none;z-index:1;opacity:.95;filter:drop-shadow(0 10px 18px rgba(0,0,0,.12))}
+.floaty{animation:floaty 6s ease-in-out infinite}
+.floaty.b{animation-duration:8s;animation-delay:-2s}
+.floaty.c{animation-duration:7s;animation-delay:-4s}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-16px) rotate(4deg)}}
+
+/* ---------- 2 · HERO ---------- */
+/* --hero-bg is the single swap point for the final approved hero photograph — no such asset exists
+   in the project yet, so this falls back to a flat cream fill rather than showing placeholder text. */
+.hero{
+  position:relative;
+  min-height:min(88vh,760px);
+  display:flex;align-items:center;
+  background-color:var(--white);
+  background-image:var(--hero-bg, none);
+  background-size:cover;
+  background-position:center right;
+  background-repeat:no-repeat;
+  overflow:hidden;
+}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.94) 0%,rgba(255,255,255,.55) 42%,rgba(255,255,255,0) 68%);z-index:0}
+.hero .wrap{position:relative;z-index:1;padding-top:clamp(40px,6vw,70px);padding-bottom:clamp(40px,6vw,70px);width:100%;max-width:none;margin:0}
+.hero-grid{display:block;max-width:640px}
+.hero-rating{display:inline-flex;align-items:center;gap:8px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:.78rem;background:#fff;border:1px solid var(--line);border-radius:40px;padding:8px 16px;margin-bottom:18px}
+.hero-rating .stars{color:var(--pink-deep);letter-spacing:1px;font-size:.95rem}
+.hero h1{margin:.15em 0 .35em}
+.hero h1 .pink{color:var(--pink-deep)}
+.hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin:2rem 0 .7rem}
+.hero-cue{display:block;font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:.72rem;color:#666}
+.hero-pack{position:absolute;z-index:1;right:6%;bottom:6%;width:min(20%,190px);filter:drop-shadow(0 24px 30px rgba(0,0,0,.22));animation:floaty 7s ease-in-out infinite}
+.hero-stamp{position:absolute;z-index:1;right:4%;top:8%;width:88px;animation:spin 26s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:960px){
+  .hero{background-position:60% 30%;min-height:auto}
+  .hero::before{background:linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.6) 46%,rgba(255,255,255,.96) 72%)}
+  .hero-pack{width:26%;right:4%;bottom:3%}
+  .hero-stamp{width:62px;top:4%}
+}
+
+/* ---------- SECTION HEADS ---------- */
+.sec-head{max-width:60ch}
+.sec-head .eyebrow{display:block;margin-bottom:14px}
+
+/* ---------- 3 · INGREDIENT BRIDGE (compact editorial) ---------- */
+.bridge{background:#fff;padding:clamp(38px,5vw,58px) 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+.bridge .wrap{max-width:800px;text-align:center}
+.bridge h2{font-size:clamp(1.35rem,3vw,2rem);margin-bottom:14px}
+.bridge p{color:#444;font-size:1.02rem;max-width:60ch;margin:0 auto}
+.bridge .b-line2{margin-top:12px;font-family:var(--display);text-transform:uppercase;letter-spacing:.02em;font-size:1rem;color:var(--pink-deep)}
+
+/* ---------- 4 · TICKER (pink) ---------- */
+.ticker{background:var(--pink);color:#000;overflow:hidden;padding:15px 0}
+.ticker .track{display:flex;gap:0;white-space:nowrap;width:max-content;animation:marq 28s linear infinite}
+.ticker:hover .track{animation-play-state:paused}
+.ticker .track span{font-family:var(--display);text-transform:uppercase;font-size:1.1rem;letter-spacing:.04em;padding:0 24px;display:inline-flex;align-items:center;}
+@keyframes marq{to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.ticker .track{animation:none;overflow-x:auto}}
+
+/* ---------- 5 · RECONSIDER SAUCE (BLACK) ---------- */
+.reconsider{background:var(--black);color:#fff;padding:clamp(72px,10vw,130px) 0;overflow:hidden}
+.reconsider .kicker{color:var(--pink);display:block;margin-bottom:18px}
+.reconsider h2{max-width:none;font-size:clamp(1.9rem,3.7vw,2.9rem)}
+.reconsider .rc-lead{font-size:clamp(1.02rem,1.5vw,1.2rem);color:#cfcfcf;margin-top:22px;max-width:52ch}
+.rc-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:56px;max-width:1120px;}
+.rc-step{background:#fff;color:#000;border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;}
+.rc-step .rc-img{aspect-ratio:4/3;width:100%;background:var(--rc-img-bg,var(--pink-wash))}
+.rc-step .rc-body{padding:24px 26px 28px}
+.rc-step .rc-n{display:block;font-family:var(--display);font-weight:700;font-size:.78rem;letter-spacing:.1em;color:var(--pink-deep);margin-bottom:10px;}
+.rc-step .rc-l{font-family:var(--display);text-transform:uppercase;font-size:1.3rem;letter-spacing:.02em;margin-bottom:8px;line-height:1.05}
+.rc-step p{margin:0;font-size:.95rem;color:#333}
+.rc-close{margin-top:30px;font-family:var(--display);text-transform:uppercase;letter-spacing:.03em;font-size:clamp(1.3rem,2.4vw,1.8rem);color:var(--pink)}
+
+/* ---------- WAVE DIVIDERS ---------- */
+.wave{display:block;width:100%;height:clamp(50px,7vw,110px)}
+.wave svg{display:block;width:100%;height:100%}
+
+/* ---------- 6 · LABEL COMPARISON (WHITE) ---------- */
+.compare{background:var(--white);padding:clamp(72px,10vw,130px) 0}
+.compare .sec-head{text-align:center;margin:0 auto 46px;max-width:640px}
+.compare .sec-head .eyebrow{margin-bottom:14px}
+.compare .c-sub{text-align:center;color:#555;max-width:52ch;margin:-30px auto 40px}
+.cmp{max-width:1000px;margin:0 auto;border:2px solid var(--black);border-radius:12px;overflow:hidden;background:#fff}
+.cmp-head{display:grid;grid-template-columns:1.15fr 3fr}
+.cmp-head-sides{display:grid;grid-template-columns:1fr 1fr}
+.cmp-head .h-topic{padding:20px 24px}
+.cmp-head .h-topic{background:#fff;color:#000}
+.cmp-head .h-usual,.cmp-head .h-dw{padding:20px 22px;font-family:var(--display);text-transform:uppercase;line-height:1;letter-spacing:.01em}
+.cmp-head .h-usual{background:#fff;color:#000;font-size:1rem;border-left:1px solid var(--line);align-self:center}
+.cmp-head .h-dw{background:var(--black);color:#fff;font-size:1.2rem;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.cmp-head .h-dw .badge{width:38px;height:38px;flex:0 0 auto;filter:brightness(0) invert(1)}
+.cmp-row{display:grid;grid-template-columns:1.15fr 3fr;border-top:1px solid var(--line)}
+.cmp-sides{display:grid;grid-template-columns:1fr 1fr}
+.cmp-topic{padding:22px 24px;display:flex;align-items:center;font-weight:700;font-size:1rem;color:#111}
+.cmp-usual,.cmp-dw{padding:22px;display:flex;align-items:center;gap:13px;min-height:98px;font-size:1.02rem;line-height:1.32}
+.cmp-usual{border-left:1px solid var(--line);color:#3a3a3a}
+.cmp-dw{background:var(--pink);color:#000;font-weight:700}
+.cmp-usual .mk,.cmp-dw .mk{flex:0 0 auto;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.cmp-usual .mk{background:#ededed}
+.cmp-usual .mk svg{width:12px;height:12px;stroke:#a2a2a2}
+.cmp-dw .mk{background:#000}
+.cmp-dw .mk svg{width:12px;height:12px;stroke:#fff}
+.cl-label{display:none}
+
+/* ---------- 7 · FOUNDER STORY (pinned horizontal scroll >1024px, PINK) ----------
+   #fsStage is the pinned trigger (heading + track stay in view together, centred as one unit).
+   #fsTrackH is the only horizontally-transformed element — never the same element as
+   the pin target. No manually-calculated height lives here; ScrollTrigger derives the
+   scroll distance from track.scrollWidth at runtime and manages its own pin spacer. */
+.founder-story{background:var(--pink);color:#000;overflow:hidden}
+.fs-stage{height:100vh;min-height:680px;display:grid;grid-template-rows:auto auto;align-content:center;overflow:hidden}
+.founder-story .fs-intro{text-align:center;margin:0 auto;padding:0 var(--pad) clamp(24px,3.5vh,38px)}
+.founder-story .fs-intro .eyebrow{color:var(--pink-deep)}
+.fs-pin{position:relative;min-height:0;width:100%;overflow:hidden;display:flex;align-items:flex-start}
+.fs-track-h{display:flex;align-items:flex-start;width:max-content;will-change:transform;padding:0 clamp(28px,5vw,72px)}
+.fs-panel-wrap{display:flex;align-items:center;gap:16px;flex-shrink:0;margin-right:clamp(52px,6vw,88px)}
+.fs-panel-wrap:last-child{margin-right:0}
+.fs-panel-h{width:clamp(330px,30vw,420px);flex-shrink:0;display:flex;flex-direction:column;gap:18px}
+/* Editable image placeholder — no founder photography loaded here; swap the background/content
+   of the element carrying data-founder-image once real photography is supplied. */
+.fs-panel-media{width:100%;aspect-ratio:16/10;max-height:260px;background:#fff;border:2px solid #000;border-radius:var(--r)}
+.fs-panel-copy{max-width:36ch}
+.fs-panel-copy h3{font-size:clamp(1.2rem,1.6vw,1.5rem);line-height:1.1;margin-bottom:10px}
+.fs-panel-copy p{font-size:clamp(.95rem,1vw,1rem);line-height:1.5;color:#222;margin:0}
+.fs-connector{width:64px;height:44px;flex-shrink:0;color:#000;opacity:.5}
+@media(max-width:1024px){
+  .fs-stage{height:auto;min-height:0;display:block}
+  .fs-pin{height:auto!important;overflow:visible;display:block}
+  .fs-track-h{display:block;width:auto;transform:none!important;padding:0 var(--pad) clamp(30px,5vw,50px)}
+  .fs-panel-wrap{display:block;margin-right:0}
+  .fs-panel-h{width:100%;max-width:560px;margin:0 auto clamp(40px,6vw,56px)}
+  .fs-connector{display:none}
+}
+/* JS-applied fallback for prefers-reduced-motion at any viewport width — the pin script never
+   creates a ScrollTrigger in this case, so this mirrors the tablet/mobile stacked layout above. */
+.founder-story.fs-no-motion .fs-stage{height:auto;min-height:0;display:block}
+.founder-story.fs-no-motion .fs-pin{height:auto!important;overflow:visible;display:block}
+.founder-story.fs-no-motion .fs-track-h{display:block;width:auto;transform:none!important;padding:0 var(--pad) clamp(30px,5vw,50px)}
+.founder-story.fs-no-motion .fs-panel-wrap{display:block;margin-right:0}
+.founder-story.fs-no-motion .fs-panel-h{width:100%;max-width:560px;margin:0 auto clamp(40px,6vw,56px)}
+.founder-story.fs-no-motion .fs-connector{display:none}
+
+/* ---------- 8 · WHAT MAKES DR WILL'S DIFFERENT (4 cards) ---------- */
+.diff{background:var(--white);padding:clamp(72px,10vw,130px) 0}
+.diff .sec-head{text-align:center;margin:0 auto 44px;max-width:1100px}
+.diff .d-sub{text-align:center;color:#555;max-width:52ch;margin:14px auto 0}
+.diff-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;max-width:1240px;margin:0 auto;align-items:stretch}
+.diff-tile{position:relative;overflow:hidden;border-radius:10px;border:2px solid var(--black);background:#fff;display:flex;flex-direction:column;color:#000}
+.diff-tile .diff-media{position:relative;aspect-ratio:4/5;background:var(--dm-bg,var(--pink-wash));overflow:hidden}
+.diff-tile .diff-media img{width:100%;height:100%;object-fit:cover}
+.diff-tile .diff-media .pack{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:26px;filter:drop-shadow(0 14px 20px rgba(0,0,0,.16))}
+.diff-tile .diff-body{padding:22px 22px 26px;flex:1;display:flex;flex-direction:column}
+.diff-tile .theme{font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:.66rem;margin-bottom:8px;color:var(--pink-deep)}
+.diff-tile h3{font-size:1.3rem;line-height:1.05;margin-bottom:10px}
+.diff-tile p{font-size:.92rem;line-height:1.42;margin:0;color:#333}
+.diff-bcorp{width:72px;height:72px;background:var(--black);border-radius:14px;padding:12px;display:flex;align-items:center;justify-content:center;margin:0 auto}
+.diff-bcorp img{width:100%;height:100%;object-fit:contain;filter:brightness(0) invert(1)}
+.taste-proof{display:inline-flex;align-items:center;gap:8px;margin-top:auto;padding-top:14px;font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;color:var(--pink-deep)}
+.taste-proof b{background:var(--pink);color:#000;border-radius:6px;padding:3px 8px}
+.diff-cta{display:block;text-align:center;margin:44px auto 0;font-family:var(--display);text-transform:uppercase;letter-spacing:.03em;font-size:1.15rem;color:var(--pink-deep);transition:.25s}
+.diff-cta:hover{color:#000}
+
+/* ---------- 9 · RANGE & PRODUCT EXPLORER ---------- */
+.explorer{background:var(--white);padding:clamp(72px,10vw,130px) 0;overflow:hidden;border-top:1px solid var(--line)}
+.explorer .sec-head{text-align:center;margin:0 auto 12px;max-width:960px}
+.explorer .exp-sub{text-align:center;color:#444;max-width:60ch;margin:0 auto 48px}
+.exp-filters{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:24px}
+.filter-btn{font-family:var(--display);background:var(--black);color:#fff;border:2px solid var(--black);border-radius:8px;padding:.7em 1.25em;font-weight:700;text-transform:uppercase;letter-spacing:.03em;font-size:.8rem;transition:.2s var(--ease);min-height:44px}
+.filter-btn:hover{background:var(--pink-deep);border-color:var(--pink-deep)}
+.filter-btn[aria-pressed="true"]{background:var(--pink);color:#000;border-color:var(--black)}
+.exp-pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:0 auto 46px;max-width:980px}
+.exp-pill{font-family:var(--display);background:#fff;color:#000;border:2px solid var(--black);border-radius:8px;padding:.65em 1.15em;font-weight:700;text-transform:uppercase;letter-spacing:.02em;font-size:.78rem;transition:.2s var(--ease);min-height:44px;white-space:nowrap}
+.exp-pill:hover{background:var(--pink-wash)}
+.exp-pill[aria-pressed="true"]{border-color:var(--black);background:var(--pc,var(--pink));color:#000}
+.exp-pill.hidden{display:none}
+.exp-stage{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,4vw,56px);align-items:start;max-width:1120px;margin:0 auto}
+.exp-gallery-frame{position:relative;border-radius:var(--r);background:var(--acc,var(--pink));transition:background .5s var(--ease);min-height:420px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.exp-details{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:clamp(24px,3vw,36px)}
+.exp-gallery-frame::after{content:"";position:absolute;width:74%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.18)}
+.exp-gallery-img{position:relative;z-index:2;height:min(50vw,380px);width:auto;filter:drop-shadow(0 26px 34px rgba(0,0,0,.3));transition:opacity .3s,transform .5s var(--ease)}
+.exp-gnav{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:46px;height:46px;border-radius:50%;background:#fff;border:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 8px 18px rgba(0,0,0,.18);transition:.2s}
+.exp-gnav:hover{background:#000;color:#fff}
+.exp-gnav.prev{left:14px}.exp-gnav.next{right:14px}
+.exp-gnav[hidden]{display:none}
+.exp-gdots{display:flex;gap:8px;justify-content:center;margin-top:16px}
+.exp-gdots button{width:8px;height:8px;border-radius:50%;background:#ccc;border:0;padding:0;min-height:0}
+.exp-gdots button.on{background:#000;width:22px;border-radius:5px}
+.exp-gdots[hidden]{display:none}
+.exp-cat{font-weight:700;text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;color:var(--pc,var(--pink-deep));transition:color .4s}
+.exp-name{font-size:clamp(1.8rem,3.4vw,2.7rem);margin:.12em 0 .22em}
+.exp-rating{display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:700;margin-bottom:14px}
+.exp-rating .stars{color:var(--pink-deep);letter-spacing:1px}
+.exp-rating .rc-count{color:#666;font-weight:500}
+.exp-rating-tbc{color:#777;font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-size:.76rem}
+.exp-tagline{font-family:var(--display);text-transform:uppercase;letter-spacing:.02em;color:#000;font-size:1rem;margin-bottom:10px}
+.exp-desc{font-family:var(--body);font-size:16px;font-weight:400;font-style:normal;line-height:28.8px;letter-spacing:.6px;color:rgb(18,18,18);margin-bottom:16px}
+.exp-pack{font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:.78rem;color:#555;margin-bottom:16px}
+.exp-gtk-list{margin:0;padding-left:1.2em;font-size:.95rem;line-height:1.65;color:#222}
+.exp-gtk-list li{margin-bottom:4px}
+.exp-gtk-list .info{color:#555}
+.range-product-accordion{border-top:2px solid var(--pink)}
+.range-product-accordion:last-of-type{border-bottom:2px solid var(--pink)}
+.range-product-accordion summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 2px;font-family:var(--display);font-weight:700;text-transform:uppercase;font-size:1.05rem;letter-spacing:.01em;min-height:44px}
+.range-product-accordion summary::-webkit-details-marker{display:none}
+.range-product-accordion__icon{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;transition:transform .3s var(--ease)}
+.range-product-accordion__icon svg{width:16px;height:16px}
+.range-product-accordion[open] .range-product-accordion__icon{transform:rotate(180deg)}
+.range-product-accordion__content{padding:0 2px 22px;font-size:.95rem;line-height:1.55;color:#222}
+.range-product-accordion__content b{font-weight:700}
+.exp-allergen-note{display:block;margin-top:10px;font-size:.8rem;color:#666}
+.exp-tbc{color:#777;font-style:normal}
+.nutri{width:100%;border-collapse:collapse;font-size:.9rem}
+.nutri caption{text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:#888;font-weight:700;margin-bottom:8px}
+.nutri th{text-align:left;padding:8px 6px;border-bottom:2px solid #000;font-size:.72rem;text-transform:uppercase;letter-spacing:.03em}
+.nutri th:not(:first-child),.nutri td:not(:first-child){text-align:right}
+.nutri td{padding:9px 6px;border-bottom:1px solid var(--line)}
+.nutri tr:last-child td{border-bottom:0}
+.exp-nutri-wrap{overflow-x:auto}
+.exp-dnote-wrap{margin-top:44px}
+
+/* ---------- 10 · BUILD YOUR BOX (live reference) ---------- */
+.byb-ref{background:var(--pink);color:#000;padding:clamp(56px,7vw,90px) 0 clamp(70px,9vw,110px)}
+.byb-ref .sec-head{text-align:center;margin:0 auto 8px}
+.byb-ref .eyebrow{color:#7a2130}
+.byb-ref .byb-lead{text-align:center;max-width:58ch;margin:0 auto 12px;font-size:1.05rem}
+.byb-ref .byb-cue{display:block;text-align:center;font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.76rem;color:#7a2130;margin-bottom:34px}
+.ref-frame{max-width:1080px;margin:0 auto;border-radius:12px;overflow:hidden;border:2px solid var(--black);background:#fff}
+.ref-frame img{width:100%;height:auto;display:block}
+.byb-ref .ref-cta{display:block;text-align:center;margin-top:30px}
+
+/* ---------- 11 · CUSTOMER REVIEWS (live reference) ---------- */
+.reviews-ref{background:#fff;padding:clamp(72px,10vw,120px) 0}
+.reviews-ref .sec-head{text-align:center;margin:0 auto 10px}
+.reviews-ref .rv-lead{text-align:center;color:#555;max-width:56ch;margin:0 auto 40px}
+
+/* ---------- 12 · RECIPE CAROUSEL ---------- */
+.recipes{background:var(--white);padding:clamp(72px,10vw,120px) 0 clamp(40px,6vw,70px);overflow:hidden}
+.recipes .rec-head{display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:34px;text-align:center}
+.recipes .rec-head-text{max-width:900px}
+.recipes .rec-head p{color:#555;max-width:44ch;margin:.6em auto 0}
+.rec-nav{display:flex;gap:10px}
+.rec-arrow{width:52px;height:52px;border-radius:50%;border:2px solid #000;background:#fff;display:flex;align-items:center;justify-content:center;transition:.25s}
+.rec-arrow:hover{background:#000;color:#fff}
+.rec-arrow svg{width:20px;height:20px}
+.rec-track{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;padding-top:8px;padding-bottom:26px;scroll-padding-left:var(--pad);scrollbar-width:none;cursor:grab;}
+.rec-track::-webkit-scrollbar{display:none}
+.rec-track.drag{cursor:grabbing;scroll-snap-type:none}
+.rec-card{flex:0 0 clamp(260px,32vw,360px);scroll-snap-align:start;position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:3/3.7;background:#000;border:1px solid rgba(0,0,0,.1);}
+.rec-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
+.rec-card:hover img{transform:scale(1.06)}
+.rec-card .grad{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 30%,rgba(0,0,0,.82) 100%)}
+.rec-card .tags{position:absolute;top:16px;left:16px;display:flex;gap:8px;z-index:2}
+.rec-card .tag{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:6px 11px;border-radius:30px;background:#fff;color:#000}
+.rec-card .tag.sauce{background:var(--sc,var(--pink));color:#000}
+.rec-card .cap{position:absolute;left:0;right:0;bottom:0;padding:22px;color:#fff;z-index:2}
+.rec-card .cap h3{font-size:1.55rem;line-height:.95}
+.rec-card .cap p{margin:.5em 0 0;font-size:.86rem;opacity:.9;text-transform:none;font-weight:500}
+.rec-dots{display:flex;gap:8px;justify-content:center;margin-top:6px}
+.rec-dots button{width:9px;height:9px;border-radius:50%;background:#ccc;border:0;transition:.25s;padding:0;min-height:0}
+.rec-dots button.on{background:#000;width:26px;border-radius:6px}
+
+/* ---------- 13 · PRESS STRIP ---------- */
+.press{background:var(--white);padding:clamp(50px,6vw,80px) 0;border-top:1px solid var(--line)}
+.press .sec-head{text-align:center;margin:0 auto 30px}
+.press-logos{display:flex;flex-wrap:nowrap;align-items:center;justify-content:center;gap:clamp(18px,4vw,68px);padding:20px 0;}
+.press-logos img{height:clamp(18px,2.6vw,36px);width:auto;flex:0 0 auto;opacity:.72;filter:grayscale(1);transition:.3s}
+.press-logos img:hover{opacity:1;filter:grayscale(0)}
+@media(max-width:560px){
+  .press-logos{flex-wrap:wrap}
+}
+
+/* ---------- 14 · FAQ (live reference) ---------- */
+.faq-ref{background:#fff;padding:clamp(72px,10vw,120px) 0;border-top:1px solid var(--line)}
+.faq-ref .sec-head{text-align:center;margin:0 auto 40px}
+
+/* ---------- 15 · FINAL CTA (image-led pink banner) ---------- */
+.final{background:var(--pink);color:#000;overflow:hidden;position:relative;min-height:clamp(360px,44vw,540px);display:flex;align-items:center}
+.final-image{position:absolute;inset:0;z-index:0}
+.final-image img{width:100%;height:100%;object-fit:cover;object-position:80% 40%}
+.final-image::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,var(--pink) 0%,var(--pink) 32%,rgba(229,143,156,.65) 50%,rgba(229,143,156,0) 68%)}
+.final .wrap{position:relative;z-index:1;max-width:640px;margin:0;padding-top:clamp(50px,7vw,70px);padding-bottom:clamp(50px,7vw,70px)}
+.final h2{font-size:clamp(2.2rem,5.6vw,4.2rem);margin:0 0 16px}
+.final p{font-size:clamp(1rem,1.6vw,1.2rem);max-width:38ch;margin:0 0 30px}
+.final .btn{font-size:1.02rem;padding:1.1em 1.9em}
+
+/* ---------- FOOTER ---------- */
+footer{background:var(--black);color:#fff;padding:clamp(50px,7vw,80px) 0 40px}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px;margin-bottom:44px}
+.foot-logo img{height:44px;filter:brightness(0) invert(1);margin-bottom:18px}
+.foot-grid p{color:#9a9a9a;max-width:38ch;font-size:.92rem}
+.foot-col h5{font-family:var(--display);text-transform:uppercase;font-size:1.1rem;margin:0 0 16px}
+.foot-col a{display:block;color:#bbb;padding:6px 0;font-size:.92rem;transition:.2s;min-height:32px}
+.foot-col a:hover{color:var(--pink);padding-left:5px}
+.foot-bottom{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid rgba(255,255,255,.14);padding-top:26px}
+.foot-bottom small{color:#777;font-size:.8rem}
+.foot-bcorp{width:52px;filter:brightness(0) invert(1);opacity:.85}
+
+/* ---------- STICKY MOBILE CTA ---------- */
+.sticky-cta{position:fixed;left:12px;right:12px;bottom:12px;z-index:70;display:none;align-items:center;justify-content:space-between;gap:14px;background:#000;color:#fff;border-radius:60px;padding:10px 12px 10px 22px;box-shadow:0 14px 34px rgba(0,0,0,.35);transform:translateY(140%);transition:transform .4s var(--ease);}
+.sticky-cta.show{transform:translateY(0)}
+.sticky-cta .sc-txt{font-family:var(--display);text-transform:uppercase;font-size:1.05rem;line-height:1}
+.sticky-cta .sc-txt small{display:block;font-family:var(--body);font-weight:500;font-size:.68rem;letter-spacing:.05em;opacity:.7;text-transform:uppercase}
+.sticky-cta .btn{padding:.85em 1.3em;font-size:.8rem}
+
+/* ---------- DESIGNER NOTES ---------- */
+.dnote{display:none;position:relative;background:#141414;color:#f5f5f5;border:1.5px solid var(--pink);border-radius:14px;padding:16px 18px;margin:20px auto;font-family:var(--body);font-weight:500;font-size:.9rem;line-height:1.5;max-width:var(--maxw);letter-spacing:.005em;text-transform:none;}
+.dnote::before{content:"◆ DESIGNER NOTE";display:block;font-weight:700;letter-spacing:.1em;font-size:.7rem;color:var(--pink);text-transform:uppercase;margin-bottom:8px;}
+.dnote.inline{margin-left:0;margin-right:0}
+body.notes-on .dnote{display:block;animation:noteIn .4s var(--ease)}
+@keyframes noteIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pin{display:none;position:absolute;z-index:20;background:var(--pink);color:#000;font-family:var(--body);font-weight:700;font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;padding:5px 10px;border-radius:30px;box-shadow:0 6px 16px rgba(0,0,0,.3);white-space:nowrap;}
+body.notes-on .pin{display:inline-flex;align-items:center;gap:6px}
+.pin::before{content:"◆";font-size:.7em}
+.notes-toggle{position:fixed;right:16px;bottom:16px;z-index:95;background:#000;color:#fff;border:1.5px solid var(--pink);border-radius:50px;padding:11px 16px;font-family:var(--body);font-weight:700;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:9px;box-shadow:0 12px 30px rgba(0,0,0,.35);transition:transform .25s var(--ease);}
+.notes-toggle:hover{transform:translateY(-2px)}
+.notes-toggle .led{width:9px;height:9px;border-radius:50%;background:#555;transition:.25s}
+body.notes-on .notes-toggle .led{background:var(--pink);box-shadow:0 0 10px var(--pink)}
+
+/* ---------- REVEAL ANIMATIONS ---------- */
+.reveal{transition:opacity .8s var(--ease),transform .8s var(--ease)}
+html.js .reveal{opacity:0;transform:translateY(30px)}
+html.js .reveal.in{opacity:1;transform:none}
+.reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}
+.reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}
+
+/* ---------- RESPONSIVE : tablet ---------- */
+@media(max-width:960px){
+  .nav-links{display:none}
+  .nav-cta .btn{display:none}
+  .burger{display:block}
+  .rc-steps{grid-template-columns:1fr;max-width:460px;margin-left:auto;margin-right:auto}
+  .diff-grid{grid-template-columns:1fr 1fr}
+  .exp-stage{grid-template-columns:1fr;gap:34px}
+  .foot-grid{grid-template-columns:1fr 1fr}
+  .sticky-cta{display:flex}
+  .final .wrap{max-width:100%}
+  .final-image::after{background:linear-gradient(180deg,rgba(229,143,156,0) 0%,rgba(229,143,156,.55) 42%,var(--pink) 66%)}
+  .final-image img{object-position:50% 30%}
+}
+
+/* ---------- RESPONSIVE : mobile ---------- */
+@media(max-width:560px){
+  .hero-pack{display:none}
+  .bundle-row{grid-template-columns:1fr;gap:10px}
+  .foot-grid{grid-template-columns:1fr}
+  .press-logos{gap:26px}
+  .rec-head .rec-nav{display:none}
+  .display-xl{font-size:clamp(2.8rem,12vw,4rem)}
+  .rc-steps{gap:10px}
+  .diff-grid{grid-template-columns:repeat(4,86%);gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;scrollbar-width:none;margin:0 calc(var(--pad) * -1);padding-left:var(--pad);padding-right:var(--pad)}
+  .diff-grid::-webkit-scrollbar{display:none}
+  .diff-tile{scroll-snap-align:start}
+  .exp-filters{justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;margin:0 calc(var(--pad) * -1) 16px;padding:0 var(--pad) 4px;scrollbar-width:none}
+  .exp-filters::-webkit-scrollbar{display:none}
+  .exp-pills{justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;margin:0 calc(var(--pad) * -1) 40px;padding:0 var(--pad) 4px;scrollbar-width:none}
+  .exp-pills::-webkit-scrollbar{display:none}
+  .exp-pill{flex:0 0 auto}
+}
+
+/* ---------- responsive: comparison table ---------- */
+@media(max-width:760px){
+  .cmp{border:0;background:transparent;box-shadow:none;overflow:visible;max-width:560px}
+  .cmp-head{display:none}
+  .cmp-row{display:block;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:14px;border-top:1px solid var(--line)}
+  .cmp-topic{padding:14px 16px 6px;min-height:0;color:#8a8a8a;font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:.74rem}
+  .cmp-sides{grid-template-columns:1fr 1fr}
+  .cmp-usual,.cmp-dw{min-height:0;min-width:0;overflow-wrap:break-word;flex-direction:column;align-items:flex-start;gap:8px;padding:14px 15px 16px;font-size:.95rem}
+  .cmp-usual{border-left:0;border-top:1px solid var(--line)}
+  .cmp-dw{border-top:1px solid rgba(0,0,0,.08)}
+  .cl-label{display:block;font-size:.6rem;letter-spacing:.09em;text-transform:uppercase;font-weight:700;opacity:.5}
+  .cmp-dw .cl-label{opacity:.75}
+}
+
+/* ---------- REDUCED MOTION ---------- */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+  .floaty,.hero-pack,.hero-stamp,.ticker .track{animation:none}
+  .btn,.rec-card img,.exp-gallery-img,.exp-gallery-frame,.fs-track{transition:none}
+}
+</style>
+</head>
+<body>
+<script>document.documentElement.className+=' js';</script>
+
+<!-- ============ 1 · LIMITED-TIME OFFER BAR ============ -->
+<!-- Prototype-only visual bar. OFFER_END_DATE (in the countdown script near the end of <body>)
+     is a placeholder value only — production must connect this to a real, time-bound campaign deadline. -->
+<div class="offer-bar" id="limited-time-offer">
+  <div class="wrap ob-inner">
+    <a class="ob-msg" href="#build-your-box">Build your box today. Save up to 20% off when you buy a 12-sauce bundle.</a>
+    <div class="ob-timer" id="obTimer" aria-hidden="true">
+      <div class="ob-unit"><span class="ob-num" id="obDays">00</span><span class="ob-lbl">Days</span></div>
+      <span class="ob-sep">:</span>
+      <div class="ob-unit"><span class="ob-num" id="obHrs">00</span><span class="ob-lbl">Hrs</span></div>
+      <span class="ob-sep">:</span>
+      <div class="ob-unit"><span class="ob-num" id="obMin">00</span><span class="ob-lbl">Min</span></div>
+      <span class="ob-sep">:</span>
+      <div class="ob-unit"><span class="ob-num" id="obSec">00</span><span class="ob-lbl">Sec</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MAIN NAVIGATION ============ -->
+<nav class="nav" id="main-navigation">
+  <div class="wrap nav-inner">
+    <a class="nav-logo" href="#top" aria-label="Dr. Will's home">
+      <img src="assets/logos/dr-wills-logo-get-real-black.svg" alt="Dr. Will's — Get Real">
+    </a>
+    <div class="nav-links">
+      <a href="#meal-awareness">Why sauce</a>
+      <a href="#founder-story">Our story</a>
+      <a href="#explore-the-range">The range</a>
+      <a href="#recipes">Recipes</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-cta">
+      <a href="#build-your-box" class="btn btn-pink">Build your box <span class="arw">→</span></a>
+      <button class="nav-cart" aria-label="Cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+      </button>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="scrim" id="scrim"></div>
+<aside class="mobile-menu" id="mobileMenu">
+  <a href="#meal-awareness" data-close>Why sauce</a>
+  <a href="#founder-story" data-close>Our story</a>
+  <a href="#explore-the-range" data-close>The range</a>
+  <a href="#recipes" data-close>Recipes</a>
+  <a href="#faq" data-close>FAQ</a>
+  <a href="#build-your-box" class="btn btn-pink" data-close>Build your box →</a>
+</aside>
+
+<span id="top"></span>
+
+<!-- ============ 2 · FULL-IMAGE HERO ============ -->
+<!-- HERO: full-bleed background-image section. --hero-bg (set inline below) is the single swap
+     point for the final approved lifestyle/food hero photograph — no such asset currently exists in
+     the project, so it falls back to a flat cream fill. The ketchup packshot + Get Real badge are
+     kept as small floating brand dressing (not a boxed placeholder) until that photo is supplied. -->
+<header class="hero" id="hero" style="--hero-bg:none">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="hero-rating reveal"><span class="stars">★★★★★</span> 4.7★ from 665+ reviews</span>
+      <h1 class="display-xl reveal d1">Get real<br>about <span class="pink">sauce.</span></h1>
+      <p class="lead reveal d2">Proper sauce, made with real ingredients.<br>Because the bottle you reach for every week deserves a second look too.<br>Discover the range and build a box around your favourites.</p>
+      <div class="hero-actions reveal d3">
+        <a href="#build-your-box" class="btn btn-primary">Build your box <span class="arw">→</span></a>
+        <a href="#explore-the-range" class="btn btn-ghost">See the range</a>
+      </div>
+      <span class="hero-cue reveal d3">Mix &amp; match · Best value on 12 sauces</span>
+    </div>
+  </div>
+  <img class="hero-stamp" src="assets/logos/dr-wills-badge-get-real.svg" alt="Get Real badge">
+  <img class="hero-pack" src="assets/products/dr-wills-packshot-tomato-ketchup.png" alt="Dr. Will's All Natural Tomato Ketchup">
+</header>
+
+<!-- ============ 3 · COMPACT REAL-INGREDIENTS BRIDGE ============ -->
+<section class="bridge" id="food-gets-checked">
+  <div class="wrap reveal">
+    <h2 class="display-s">The food gets checked.<br>The sauce deserves a look too.</h2>
+    <p>Many familiar sauces rely on refined sugar and ingredients that are easy to overlook — the bottle deserves that same attention.</p>
+    <span class="b-line2">Real ingredients. Proper flavour. Nothing to hide.</span>
+  </div>
+</section>
+
+<!-- ============ 4 · PINK ANIMATED TICKER ============ -->
+<div class="ticker" id="ticker" aria-hidden="true">
+  <div class="track" id="tickerTrack">
+    <span>Real ingredients ✌️ Proper flavour ✌️ Made in the UK ✌️ Familiar food, made differently ✌️ Turn the bottle around ✌️</span>
+    <span>Real ingredients ✌️ Proper flavour ✌️ Made in the UK ✌️ Familiar food, made differently ✌️ Turn the bottle around ✌️</span>
+  </div>
+</div>
+
+<!-- ============ 5 · SAUCE RECONSIDERATION (BLACK) ============ -->
+<section class="reconsider" id="meal-awareness">
+  <div class="wrap">
+    <span class="eyebrow kicker reveal">The thing nobody thinks about</span>
+    <h2 class="display-l reveal d1">You think about what goes into the meal.<br>What about the sauce?</h2>
+    <p class="rc-lead reveal d2">The ingredients get considered, the meal gets planned — then the sauce comes down to what's familiar. Maybe it deserves a second look too.</p>
+
+    <div class="rc-steps reveal d2">
+      <!-- Image areas: no dedicated photography supplied for these three beats yet — solid
+           tint fills stand in (data-img-needed marks each for later replacement). -->
+      <div class="rc-step" data-img-needed="the-meal-lifestyle-photo">
+        <div class="rc-img" style="--rc-img-bg:#F5F0E6"></div>
+        <div class="rc-body">
+          <span class="rc-n">01</span>
+          <div class="rc-l">The meal</div>
+          <p>Ingredients considered, portions checked, sides sorted.</p>
+        </div>
+      </div>
+      <div class="rc-step" data-img-needed="the-sauce-lifestyle-photo">
+        <div class="rc-img" style="--rc-img-bg:var(--pink-wash)"></div>
+        <div class="rc-body">
+          <span class="rc-n">02</span>
+          <div class="rc-l">The sauce</div>
+          <p>Often chosen because it is familiar — same bottle, out of habit.</p>
+        </div>
+      </div>
+      <div class="rc-step" data-img-needed="the-second-look-photo">
+        <div class="rc-img" style="--rc-img-bg:#EFE9F5"></div>
+        <div class="rc-body">
+          <span class="rc-n">03</span>
+          <div class="rc-l">The second look</div>
+          <p>Turn the bottle around. What is actually in there?</p>
+        </div>
+      </div>
+    </div>
+    <div class="rc-close reveal d3">Turn the bottle around.</div>
+  </div>
+</section>
+
+<!-- wave: black -> paper -->
+<div class="wave" aria-hidden="true">
+  <svg viewBox="0 0 1440 110" preserveAspectRatio="none"><path fill="#FFFFFF" d="M0,40 C280,110 520,0 760,36 C1000,72 1200,120 1440,58 L1440,110 L0,110 Z"></path><rect x="0" y="0" width="1440" height="42" fill="#000"></rect><path fill="#000" d="M0,42 C280,112 520,2 760,38 C1000,74 1200,122 1440,60 L1440,0 L0,0 Z"></path></svg>
+</div>
+
+<!-- ============ 6 · LABEL COMPARISON (WHITE) ============ -->
+<section class="compare" id="label-comparison">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">What changes when you look</span>
+      <h2 class="display-m">Sauce is sauce.<br>Until you read the label.</h2>
+    </div>
+    <p class="c-sub reveal d1">What changes when you turn the bottle around.</p>
+
+    <!-- ONE unified two-column comparison table -->
+    <div class="cmp reveal d1" role="table" aria-label="The usual sauce compared with Dr. Will's">
+      <div class="cmp-head" role="row">
+        <div class="h-topic" role="columnheader"></div>
+        <div class="cmp-head-sides">
+          <div class="h-usual" role="columnheader">The usual sauce</div>
+          <div class="h-dw" role="columnheader"><span>Dr. Will's</span><img class="badge" src="assets/logos/dr-wills-badge-get-real.svg" alt="Get Real"></div>
+        </div>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <div class="cmp-topic" role="rowheader">What's inside?</div>
+        <div class="cmp-sides">
+          <div class="cmp-usual" role="cell"><span class="cl-label">The usual sauce</span><span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M6 12h12" stroke-linecap="round"/></svg></span><span>More to decode</span></div>
+          <div class="cmp-dw" role="cell"><span class="cl-label">Dr. Will's</span><span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Real, recognisable ingredients</span></div>
+        </div>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <div class="cmp-topic" role="rowheader">Where does the sweetness come from?</div>
+        <div class="cmp-sides">
+          <div class="cmp-usual" role="cell"><span class="cl-label">The usual sauce</span><span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M6 12h12" stroke-linecap="round"/></svg></span><span>Refined sugar may be used</span></div>
+          <div class="cmp-dw" role="cell"><span class="cl-label">Dr. Will's</span><span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Dates or date syrup where needed</span></div>
+        </div>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <div class="cmp-topic" role="rowheader">Does better mean bland?</div>
+        <div class="cmp-sides">
+          <div class="cmp-usual" role="cell"><span class="cl-label">The usual sauce</span><span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M6 12h12" stroke-linecap="round"/></svg></span><span>The compromise people expect</span></div>
+          <div class="cmp-dw" role="cell"><span class="cl-label">Dr. Will's</span><span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Proper flavour still comes first</span></div>
+        </div>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <div class="cmp-topic" role="rowheader">How big is the switch?</div>
+        <div class="cmp-sides">
+          <div class="cmp-usual" role="cell"><span class="cl-label">The usual sauce</span><span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M6 12h12" stroke-linecap="round"/></svg></span><span>Rethink the meal</span></div>
+          <div class="cmp-dw" role="cell"><span class="cl-label">Dr. Will's</span><span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Change the bottle</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dnote inline">COMPARISON WORDING IS A STRATEGIC PROTOTYPE. FINAL RANGE-WIDE AND CATEGORY COMPARATIVE CLAIMS TO BE CONFIRMED BEFORE PRODUCTION. No competitor is named and no figures are used; the usual-sauce column stays neutral (no crosses / no fear language) so the difference reads through clarity, not blame.</div>
+  </div>
+</section>
+
+<!-- wave: white -> pink founder -->
+<div class="wave" aria-hidden="true">
+  <svg viewBox="0 0 1440 100" preserveAspectRatio="none"><path fill="#E58F9C" d="M0,50 C220,0 480,90 720,60 C960,30 1220,0 1440,52 L1440,100 L0,100 Z"></path></svg>
+</div>
+
+<!-- ============ 7 · SWIPEABLE FOUNDER STORY (PINK) ============ -->
+<!-- Six panels, image-top/headline/copy only (no step numbers, years or "Today" labels).
+     Desktop (>1024px): GSAP ScrollTrigger pins the section and drives the track horizontally as the
+     user scrolls (script near end of body). Tablet/mobile: plain vertical stack, no JS required. -->
+<section class="founder-story" id="founder-story">
+  <div class="fs-stage" id="fsStage">
+
+    <div class="wrap fs-intro reveal">
+      <span class="eyebrow">Our story</span>
+      <h2 class="display-m">How the better bottle began</h2>
+    </div>
+
+    <!-- All six panels use an editable image placeholder (data-founder-image / data-asset-status="pending")
+         above the headline and body copy — no founder photography or product packshots are loaded here.
+         Replace each placeholder's content once real photography is supplied. -->
+    <div class="fs-pin" id="fsPin">
+      <div class="fs-track-h" id="fsTrackH">
+
+      <div class="fs-panel-wrap">
+        <article class="fs-panel-h">
+          <div class="fs-panel-media" data-founder-image="panel-1" data-asset-status="pending" role="img" aria-label="Founder-story image, panel 1 — pending"></div>
+          <div class="fs-panel-copy">
+            <h3>Three friends. Three different worlds.</h3>
+            <p>A doctor, a restaurateur and an investment banker came together through a shared love of good food and one simple belief: the everyday sauces people reach for should be made better.</p>
+          </div>
+        </article>
+        <svg class="fs-connector" viewBox="0 0 160 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0,50 C40,15 120,85 160,50" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="6 8" stroke-linecap="round"/></svg>
+      </div>
+
+      <div class="fs-panel-wrap">
+        <article class="fs-panel-h">
+          <div class="fs-panel-media" data-founder-image="panel-2" data-asset-status="pending" role="img" aria-label="Founder-story image, panel 2 — pending"></div>
+          <div class="fs-panel-copy">
+            <h3>The problem was hiding in plain sight.</h3>
+            <p>It started with Will's mum, a nursery teacher, noticing parents covering their children's vegetables in ketchup to help them eat their greens. That sparked a simple question: could ketchup be made better?</p>
+          </div>
+        </article>
+        <svg class="fs-connector" viewBox="0 0 160 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0,50 C40,85 120,15 160,50" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="6 8" stroke-linecap="round"/></svg>
+      </div>
+
+      <div class="fs-panel-wrap">
+        <article class="fs-panel-h">
+          <div class="fs-panel-media" data-founder-image="panel-3" data-asset-status="pending" role="img" aria-label="Founder-story image, panel 3 — pending"></div>
+          <div class="fs-panel-copy">
+            <h3>Thirty-odd recipes later.</h3>
+            <p>The first attempts were not quite ready for the dinner table. After more than thirty recipes and plenty of tasting, they created a naturally sweetened ketchup with the rich tomato flavour they wanted, without relying on refined sugar.</p>
+          </div>
+        </article>
+        <svg class="fs-connector" viewBox="0 0 160 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0,50 C40,15 120,85 160,50" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="6 8" stroke-linecap="round"/></svg>
+      </div>
+
+      <div class="fs-panel-wrap">
+        <article class="fs-panel-h">
+          <div class="fs-panel-media" data-founder-image="panel-4" data-asset-status="pending" role="img" aria-label="Founder-story image, panel 4 — pending"></div>
+          <div class="fs-panel-copy">
+            <h3>From a family kitchen to their first sellout.</h3>
+            <p>The first bottles were made in the kitchen of Will's parents' home in Gosforth. Then, at Jesmond Food Market, all 300 bottles sold — the first bottle bought by someone who didn't know them or the brand.</p>
+          </div>
+        </article>
+        <svg class="fs-connector" viewBox="0 0 160 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0,50 C40,85 120,15 160,50" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="6 8" stroke-linecap="round"/></svg>
+      </div>
+
+      <div class="fs-panel-wrap">
+        <article class="fs-panel-h">
+          <div class="fs-panel-media" data-founder-image="panel-5" data-asset-status="pending" role="img" aria-label="Founder-story image, panel 5 — pending"></div>
+          <div class="fs-panel-copy">
+            <h3>One sauce became a whole lot more.</h3>
+            <p>What began with a better ketchup grew into a full range of everyday favourites, from mayonnaise and barbecue sauce to hot sauces and more. Different bottles, same standard.</p>
+          </div>
+        </article>
+        <svg class="fs-connector" viewBox="0 0 160 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0,50 C40,15 120,85 160,50" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="6 8" stroke-linecap="round"/></svg>
+      </div>
+
+      <div class="fs-panel-wrap">
+        <article class="fs-panel-h">
+          <div class="fs-panel-media" data-founder-image="panel-6" data-asset-status="pending" role="img" aria-label="Founder-story image, panel 6 — pending"></div>
+          <div class="fs-panel-copy">
+            <h3>Still making the dollop better.</h3>
+            <p>Today, Dr Will's is a certified B Corporation and Great Taste Award-winning producer with a growing range of sauces made for real food and real life. The mission has stayed the same.</p>
+          </div>
+        </article>
+      </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 8 · WHAT MAKES DR. WILL'S DIFFERENT (4 cards) ============ -->
+<section class="diff" id="reasons-to-believe">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Reasons to believe</span>
+      <h2 class="display-m">What makes Dr. Will's different?</h2>
+      <p class="d-sub">Four reasons the sauce deserves a second look.</p>
+    </div>
+    <div class="diff-grid">
+
+      <!-- CARD 1 · REAL INGREDIENTS -->
+      <article class="diff-tile reveal">
+        <div class="diff-media" style="--dm-bg:var(--pink-wash)">
+          <img class="pack" src="assets/products/dr-wills-packshot-tomato-ketchup.png" alt="Dr. Will's Tomato Ketchup">
+        </div>
+        <div class="diff-body">
+          <div class="theme">Real ingredients</div>
+          <h3>Food that reads like food.</h3>
+          <p>Real, recognisable ingredients and an open approach to what actually goes into every sauce.</p>
+        </div>
+      </article>
+
+      <!-- CARD 2 · PROPER FLAVOUR -->
+      <article class="diff-tile reveal d1">
+        <div class="diff-media" style="--dm-bg:#F5EAD1">
+          <img class="pack" src="assets/products/dr-wills-packshot-bbq-sauce.png" alt="Dr. Will's Barbecue Sauce">
+        </div>
+        <div class="diff-body">
+          <div class="theme">Proper flavour</div>
+          <h3>Better ingredients. No compromise on taste.</h3>
+          <p>Familiar sauces made differently — but still rich, punchy and properly delicious.</p>
+          <!-- No supplied Great Taste Award badge asset found in project files — using text-only
+               taste-proof line rather than inventing a badge image. Flagged in completion summary. -->
+          <span class="taste-proof"><b>Great Taste</b> award-winning across the range</span>
+        </div>
+      </article>
+
+      <!-- CARD 3 · NATURALLY SWEETENED WITH DATES -->
+      <article class="diff-tile reveal d1">
+        <div class="diff-media" style="--dm-bg:#FCEAED">
+          <img src="assets/images/founder-dr-will-portrait.webp" alt="">
+        </div>
+        <div class="diff-body">
+          <div class="theme">No added sugar</div>
+          <h3>Naturally sweetened with dates.</h3>
+          <p>Dates bring natural sweetness and a richer depth of flavour, helping Dr Will's make sauces without adding refined sugar.</p>
+        </div>
+      </article>
+
+      <!-- CARD 4 · B CORP / RESPONSIBLE -->
+      <article class="diff-tile reveal d2">
+        <div class="diff-media" style="--dm-bg:var(--pink-wash);display:flex;align-items:center;justify-content:center">
+          <div class="diff-bcorp"><img src="assets/credentials/credential-bcorp.webp" alt="Certified B Corporation"></div>
+        </div>
+        <div class="diff-body">
+          <div class="theme">Good food. Bigger picture.</div>
+          <h3>Open, honest and B Corp certified.</h3>
+          <p>A certified B Corporation built around openness, honesty and a more responsible approach to making food.</p>
+        </div>
+      </article>
+
+    </div>
+    <a class="diff-cta reveal d3" href="#explore-the-range">Meet the range ↓</a>
+    <div class="dnote inline">Card 3 is framed as brand history/credibility (a founding question), not a medical claim — deliberately avoids "invented by a doctor / doctor approved / doctor recommended" language. B Corp appears only here (card 4); Great Taste appears only as a taste-proof line (card 2). Confirm award and certification wording before production.</div>
+  </div>
+</section>
+
+<!-- ============ 9 · RANGE & PRODUCT EXPLORER ============ -->
+<section class="explorer" id="explore-the-range">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Meet the range</span>
+      <h2 class="display-m">One simple ketchup idea.<br>A whole cupboard of real sauce.</h2>
+    </div>
+    <p class="exp-sub reveal d1">What started with ketchup now includes table sauces, mayos, dressings and hot sauces — each made around the same idea: recognisable ingredients, proper flavour and bottles worth turning around. Pick a sauce to see what's inside.</p>
+
+    <!-- category filters -->
+    <div class="exp-filters reveal d1" role="group" aria-label="Filter the range by category" id="expFilters">
+      <button class="filter-btn" data-cat="all" aria-pressed="true" type="button">All</button>
+      <button class="filter-btn" data-cat="table-sauces" aria-pressed="false" type="button">Table Sauces</button>
+      <button class="filter-btn" data-cat="mayos" aria-pressed="false" type="button">Mayos</button>
+      <button class="filter-btn" data-cat="hot-sauces" aria-pressed="false" type="button">Hot Sauces</button>
+      <button class="filter-btn" data-cat="dressings" aria-pressed="false" type="button">Dressings</button>
+    </div>
+
+    <!-- product selector pills -->
+    <div class="exp-pills reveal d1" id="expPills" role="group" aria-label="Choose a product"><!-- populated by JS --></div>
+
+    <div class="exp-stage">
+      <!-- LEFT: gallery -->
+      <div class="exp-gallery reveal d1">
+        <div class="exp-gallery-frame" id="expFrame" style="--acc:#E58F9C">
+          <img class="exp-gallery-img" id="expImg" src="" alt="">
+          <button class="exp-gnav prev" id="expPrev" type="button" aria-label="Previous image">‹</button>
+          <button class="exp-gnav next" id="expNext" type="button" aria-label="Next image">›</button>
+        </div>
+        <div class="exp-gdots" id="expDots"></div>
+      </div>
+
+      <!-- RIGHT: details -->
+      <div class="exp-details reveal d2">
+        <div class="exp-cat" id="expCat" style="--pc:#E58F9C"></div>
+        <h3 class="exp-name" id="expName" aria-live="polite"></h3>
+        <div class="exp-rating" id="expRating"></div>
+        <p class="exp-tagline" id="expTagline"></p>
+        <p class="exp-desc" id="expDesc"></p>
+        <div class="exp-pack" id="expPack"></div>
+
+        <details class="range-product-accordion" id="expAccGtk" open>
+          <summary><span>Good to Know</span><span class="range-product-accordion__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary>
+          <div class="range-product-accordion__content" id="expGtk"></div>
+        </details>
+        <details class="range-product-accordion" id="expAccIng">
+          <summary><span>Ingredients</span><span class="range-product-accordion__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary>
+          <div class="range-product-accordion__content" id="expIngBody"></div>
+        </details>
+        <details class="range-product-accordion" id="expAccNut">
+          <summary><span>Nutritional Info</span><span class="range-product-accordion__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary>
+          <div class="range-product-accordion__content" id="expNutBody"></div>
+        </details>
+      </div>
+    </div>
+
+    <div class="exp-dnote-wrap">
+      <div class="dnote inline">Ingredients, nutrition, ratings and Good to Know badges are sourced from supplied live dr-wills.com product data (per 100g + per-serving). Chipotle Ranch is missing rating, review count, pack size and nutrition and shows "to be confirmed" states rather than invented values — see per-product code comments in the script below for individual source-data inconsistencies (e.g. Barbecue Sauce's unconfirmed sugars footnote, Sriracha's unusual "&gt;0.1g" serving values, Sriracha Mayo's serving-size mismatch). Each product currently has one supplied packshot image; gallery arrows/dots are hidden automatically when only one image is available, but the gallery markup supports more images per product later. Verify all values against approved product data before production.</div>
+    </div>
+  </div>
+</section>
+
+<!-- wave: explorer -> pink build your box -->
+<div class="wave" aria-hidden="true">
+  <svg viewBox="0 0 1440 110" preserveAspectRatio="none"><path fill="#E58F9C" d="M0,60 C260,120 520,10 760,44 C1000,78 1220,110 1440,50 L1440,110 L0,110 Z"></path><path fill="#FFFFFF" d="M0,0 L1440,0 L1440,50 C1220,110 1000,78 760,44 C520,10 260,120 0,60 Z"></path></svg>
+</div>
+
+<!-- ============ 10 · BUILD YOUR BOX (existing live functionality) ============ -->
+<!-- PROTOTYPE REFERENCE ONLY: Final implementation should reuse the existing live Dr Will's
+     Build Your Box functionality. Do not recreate the underlying bundle or subscription logic. -->
+<section class="byb-ref" id="build-your-box">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">The main event</span>
+      <h2 class="display-m">Build your box.</h2>
+    </div>
+    <p class="byb-lead reveal d1">Mix and match the sauces you actually use. Start with four, stock up with eight, or get the best value when you build a box of twelve.</p>
+    <span class="byb-cue reveal d1">Mix. Match. Stock up.</span>
+
+    <div class="ref-frame reveal d1">
+      <picture>
+        <source media="(max-width:760px)" srcset="assets/references/build-your-box-live-reference-mobile.png">
+        <img src="assets/references/build-your-box-live-reference-desktop.png" alt="Existing live Dr. Will's Build Your Box selector, showing bundle size and flavour picker" loading="lazy">
+      </picture>
+    </div>
+    <a class="ref-cta btn btn-primary reveal d2" href="#explore-the-range">Explore the range first <span class="arw">→</span></a>
+  </div>
+</section>
+
+<!-- ============ 11 · CUSTOMER REVIEWS (existing live content) ============ -->
+<!-- PROTOTYPE REFERENCE ONLY: Final implementation should reuse the existing approved
+     customer-review content and live review component. -->
+<section class="reviews-ref" id="reviews">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Real ingredients. Real reviews.</span>
+      <h2 class="display-m">Why customers choose Dr. Will's.</h2>
+    </div>
+    <p class="rv-lead reveal d1">Real reviews on proper flavour, recognisable ingredients and the sauces people use every day.</p>
+    <div class="ref-frame reveal d1">
+      <picture>
+        <source media="(max-width:760px)" srcset="assets/references/customer-reviews-live-reference-mobile.png">
+        <img src="assets/references/customer-reviews-live-reference-desktop.png" alt="Existing live Dr. Will's customer reviews, showing approved verified-reviewer content" loading="lazy">
+      </picture>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12 · RECIPE / MEAL INSPIRATION (swipeable) ============ -->
+<section class="recipes" id="recipes">
+  <div class="wrap">
+    <div class="rec-head reveal">
+      <div class="rec-head-text">
+        <span class="eyebrow">See how people use the sauces</span>
+        <h2 class="display-m" style="margin-top:12px">What are we putting it on?</h2>
+        <p>Burgers, bowls, chips, tacos and everything in between.</p>
+      </div>
+      <div class="rec-nav">
+        <button class="rec-arrow" id="recPrev" type="button" aria-label="Previous recipe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="rec-arrow" id="recNext" type="button" aria-label="Next recipe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+  </div>
+  <div class="rec-track wrap" id="recTrack">
+    <article class="rec-card" style="--sc:var(--f-buffalo)">
+      <img src="assets/recipes/recipe-inspiration-buffalo-chicken-tacos.webp" alt="Buffalo chicken tacos">
+      <div class="grad"></div>
+      <div class="tags"><span class="tag">Dinner</span><span class="tag sauce">Buffalo Hot</span></div>
+      <div class="cap"><h3>Buffalo Chicken Tacos</h3><p>A generous drizzle of buffalo turns taco night up a notch.</p></div>
+    </article>
+    <article class="rec-card" style="--sc:var(--f-sriracha)">
+      <img src="assets/recipes/recipe-inspiration-dumpling-salad.webp" alt="Dumpling salad">
+      <div class="grad"></div>
+      <div class="tags"><span class="tag">Lunch</span><span class="tag sauce">Sriracha</span></div>
+      <div class="cap"><h3>Crispy Dumpling Salad</h3><p>A little sriracha heat against something fresh and crunchy.</p></div>
+    </article>
+    <article class="rec-card" style="--sc:var(--f-chipotle)">
+      <img src="assets/recipes/recipe-inspiration-chipotle-beef-enchilada.webp" alt="Chipotle beef enchilada">
+      <div class="grad"></div>
+      <div class="tags"><span class="tag">Dinner</span><span class="tag sauce">Chipotle Ranch</span></div>
+      <div class="cap"><h3>Chipotle Beef Enchiladas</h3><p>Smoky, saucy and finished with a cooling chipotle ranch.</p></div>
+    </article>
+    <article class="rec-card" style="--sc:var(--f-buffalo)">
+      <img src="assets/recipes/recipe-inspiration-peri-peri-tacos.webp" alt="Peri peri tacos">
+      <div class="grad"></div>
+      <div class="tags"><span class="tag">Dinner</span><span class="tag sauce">Buffalo Hot</span></div>
+      <div class="cap"><h3>Peri Peri Tacos</h3><p>Bright, spicy and built for sharing on a weeknight.</p></div>
+    </article>
+    <article class="rec-card" style="--sc:var(--f-srirachamayo)">
+      <img src="assets/recipes/recipe-inspiration-poke-bowl.webp" alt="Poke bowl">
+      <div class="grad"></div>
+      <div class="tags"><span class="tag">Lunch</span><span class="tag sauce">Sriracha Mayo</span></div>
+      <div class="cap"><h3>Sriracha Mayo Poke Bowl</h3><p>A creamy, spicy swirl over rice, veg and something fresh.</p></div>
+    </article>
+    <article class="rec-card" style="--sc:var(--f-classic)">
+      <img src="assets/recipes/recipe-inspiration-ranch-pasta.jpg" alt="Ranch pasta">
+      <div class="grad"></div>
+      <div class="tags"><span class="tag">Dinner</span><span class="tag sauce">Chipotle Ranch</span></div>
+      <div class="cap"><h3>Creamy Ranch Pasta</h3><p>Comfort food with a real-ingredient dressing stirred through.</p></div>
+    </article>
+  </div>
+  <div class="wrap">
+    <div class="rec-dots" id="recDots"></div>
+    <div class="dnote inline">Image-led inspiration only — not a recipe library. Six real supplied images. Sauce pairings are framed as suggestions; confirm before pairing a specific product with a specific dish in production. No ingredient lists or method invented.</div>
+  </div>
+</section>
+
+<!-- ============ 13 · PRESS STRIP ============ -->
+<section class="press" id="press-recognition">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">As seen in</span>
+      <h2 class="display-s">Real sauce. Recognised.</h2>
+    </div>
+    <div class="press-logos reveal d1">
+      <img src="assets/press/press-logo-the-times.svg" alt="The Times">
+      <img src="assets/press/press-logo-shortlist.svg" alt="ShortList">
+      <img src="assets/press/press-logo-daily-mail.webp" alt="Daily Mail">
+      <img src="assets/press/press-logo-womens-health.webp" alt="Women's Health">
+      <img src="assets/press/press-logo-foodism.avif" alt="Foodism">
+    </div>
+    <div class="dnote inline">Press logos are the official supplied assets, shown greyscale for a balanced editorial strip (colour on hover). Customer proof now lives in the Customer Reviews section above — no duplicate quotes here.</div>
+  </div>
+</section>
+
+<!-- ============ 14 · FAQ (existing live content) ============ -->
+<!-- PROTOTYPE REFERENCE ONLY: Final implementation should reuse the approved questions and
+     answers from the existing Dr Will's FAQ page. Production should use a simple accordion. -->
+<section class="faq-ref" id="faq">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Questions, answered</span>
+      <h2 class="display-m">Still deciding?<br>Start here.</h2>
+    </div>
+    <div class="ref-frame reveal d1">
+      <picture>
+        <source media="(max-width:760px)" srcset="assets/references/faq-live-reference-mobile.png">
+        <img src="assets/references/faq-live-reference-desktop.png" alt="Existing live Dr. Will's FAQ, showing approved questions and answers" loading="lazy">
+      </picture>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 15 · FINAL IMAGE-LED CTA BANNER ============ -->
+<section class="final" id="real-food-cta">
+  <!-- No dedicated final-CTA lifestyle/bundle photograph supplied — the tomato ketchup packshot
+       is reused here with a gradient overlay as a placeholder. Replace with an approved lifestyle
+       / bundle-arrangement image before production. Flagged in completion summary. -->
+  <div class="final-image" aria-hidden="true">
+    <img src="assets/products/dr-wills-packshot-tomato-ketchup.png" alt="">
+  </div>
+  <div class="wrap">
+    <h2 class="reveal">Real food deserves<br>real sauce.</h2>
+    <p class="reveal d1">You've given the meal some thought. Now give the sauce a better bottle.<br>Mix your favourites and build a box worth reaching for.</p>
+    <a href="#build-your-box" class="btn btn-primary reveal d2">Build your box <span class="arw">→</span></a>
+  </div>
+</section>
+
+<!-- ============ 16 · FOOTER ============ -->
+<footer id="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-logo">
+        <img src="assets/logos/dr-wills-logo-get-real-black.svg" alt="Dr. Will's">
+        <p>Sick of finding sugary, artificial sauces on supermarket shelves, Dr. Will decided to make his own — real ingredients, real food. And that's what Dr. Will's did.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Explore</h5>
+        <a href="#meal-awareness">Why sauce</a>
+        <a href="#founder-story">Our story</a>
+        <a href="#explore-the-range">The range</a>
+        <a href="#recipes">Recipes</a>
+        <a href="#faq">FAQ</a>
+        <a href="#build-your-box">Build a box</a>
+      </div>
+      <div class="foot-col">
+        <h5>Sauce for your feed</h5>
+        <a href="#">Instagram</a>
+        <a href="#">TikTok</a>
+        <a href="#">Stockists</a>
+        <a href="#">Contact us</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <small>© Dr. Will's · Internal landing page prototype · Not the final ecommerce build.</small>
+      <img class="foot-bcorp" src="assets/credentials/credential-bcorp.webp" alt="Certified B Corporation">
+    </div>
+  </div>
+</footer>
+
+<!-- ============ STICKY MOBILE CTA ============ -->
+<a class="sticky-cta" id="stickyCta" href="#build-your-box">
+  <span class="sc-txt">Build your box<small>Mix &amp; match · best value on 12 sauces</small></span>
+  <span class="btn btn-pink">Start →</span>
+</a>
+
+<!-- ============ DESIGNER NOTES TOGGLE ============ -->
+<button class="notes-toggle" id="notesToggle" aria-label="Toggle designer notes">
+  <span class="led"></span>Designer notes: <span id="notesState">Off</span>
+</button>
+
+<script>
+/* ============================================================
+   INTERACTION LAYER — lightweight vanilla JS, organised by section
+   ============================================================ */
+(function(){
+  'use strict';
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* ---------- Mobile menu ---------- */
+  var burger=document.getElementById('burger'),
+      menu=document.getElementById('mobileMenu'),
+      scrim=document.getElementById('scrim');
+  function setMenu(open){
+    menu.classList.toggle('open',open);
+    scrim.classList.toggle('on',open);
+    burger.setAttribute('aria-expanded',open?'true':'false');
+    document.body.style.overflow=open?'hidden':'';
+  }
+  burger.addEventListener('click',function(){setMenu(!menu.classList.contains('open'))});
+  scrim.addEventListener('click',function(){setMenu(false)});
+  Array.prototype.forEach.call(document.querySelectorAll('[data-close]'),function(a){
+    a.addEventListener('click',function(){setMenu(false)});
+  });
+
+  /* ---------- Designer notes toggle ---------- */
+  var notesToggle=document.getElementById('notesToggle'),
+      notesState=document.getElementById('notesState');
+  notesToggle.addEventListener('click',function(){
+    var on=document.body.classList.toggle('notes-on');
+    notesState.textContent=on?'On':'Off';
+  });
+
+  /* ---------- Reveal on scroll ---------- */
+  var reveals=document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window && !reduce){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
+      });
+    },{threshold:0.12,rootMargin:'0px 0px -8% 0px'});
+    reveals.forEach(function(el){io.observe(el)});
+  } else {
+    reveals.forEach(function(el){el.classList.add('in')});
+  }
+
+  /* ============================================================
+     SECTION 12 — RECIPE CAROUSEL: drag + snap + arrows + dots
+     ============================================================ */
+  var track=document.getElementById('recTrack'),
+      cards=track.querySelectorAll('.rec-card'),
+      dotsHost=document.getElementById('recDots'),
+      prev=document.getElementById('recPrev'),
+      next=document.getElementById('recNext');
+  function cardStep(){ return cards[0].getBoundingClientRect().width + 20; }
+  cards.forEach(function(c,i){
+    var d=document.createElement('button'); d.type='button'; d.setAttribute('aria-label','Go to card '+(i+1));
+    d.addEventListener('click',function(){ track.scrollTo({left:i*cardStep(),behavior:reduce?'auto':'smooth'}); });
+    dotsHost.appendChild(d);
+  });
+  var dots=dotsHost.querySelectorAll('button');
+  function updateDots(){
+    var i=Math.round(track.scrollLeft/cardStep());
+    dots.forEach(function(d,di){d.classList.toggle('on',di===i)});
+  }
+  track.addEventListener('scroll',function(){ window.requestAnimationFrame(updateDots); });
+  prev.addEventListener('click',function(){ track.scrollBy({left:-cardStep(),behavior:reduce?'auto':'smooth'}); });
+  next.addEventListener('click',function(){ track.scrollBy({left:cardStep(),behavior:reduce?'auto':'smooth'}); });
+  updateDots();
+  var down=false,startX=0,startScroll=0,moved=false;
+  track.addEventListener('pointerdown',function(e){
+    down=true;moved=false;startX=e.clientX;startScroll=track.scrollLeft;
+    track.classList.add('drag'); track.setPointerCapture&&track.setPointerCapture(e.pointerId);
+  });
+  track.addEventListener('pointermove',function(e){
+    if(!down)return; var dx=e.clientX-startX; if(Math.abs(dx)>4)moved=true;
+    track.scrollLeft=startScroll-dx;
+  });
+  function endDrag(){ if(!down)return; down=false; track.classList.remove('drag');
+    var i=Math.round(track.scrollLeft/cardStep());
+    track.scrollTo({left:i*cardStep(),behavior:reduce?'auto':'smooth'});
+  }
+  track.addEventListener('pointerup',endDrag);
+  track.addEventListener('pointercancel',endDrag);
+  track.addEventListener('pointerleave',endDrag);
+  track.addEventListener('dragstart',function(e){e.preventDefault()});
+  track.addEventListener('click',function(e){ if(moved){e.preventDefault();e.stopPropagation();} },true);
+
+  /* ---------- Sticky CTA (mobile) show/hide ---------- */
+  var sticky=document.getElementById('stickyCta'),
+      hero=document.querySelector('.hero'),
+      buildSec=document.getElementById('build-your-box');
+  function stickyCheck(){
+    var y=window.scrollY||window.pageYOffset;
+    var pastHero=y>(hero.offsetHeight-120);
+    var b=buildSec.getBoundingClientRect();
+    var inBuild=b.top<window.innerHeight && b.bottom>0;
+    sticky.classList.toggle('show', pastHero && !inBuild);
+  }
+  window.addEventListener('scroll',stickyCheck,{passive:true});
+  window.addEventListener('resize',function(){updateDots();stickyCheck();});
+  stickyCheck();
+})();
+</script>
+
+<script>
+/* ============================================================
+   SECTION 9 — RANGE & PRODUCT EXPLORER
+   One reusable data object + one reusable detail panel, rearranged
+   with CSS only across breakpoints (no duplicated markup/data).
+   Nutrition/ingredients/ratings verified against supplied live
+   dr-wills.com product data. Self-contained; does not touch the
+   interaction layer above.
+   ============================================================ */
+(function(){
+  'use strict';
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var TBC = '<span class="exp-tbc">Content to confirm.</span>';
+
+  var PRODUCTS = [
+    {
+      id:'tomato-ketchup', category:'table-sauces', name:"Dr. Will's Tomato Ketchup",
+      rating:5, reviewCount:65, tagline:'KETCHUP WITH A PHD IN FLAVOUR.',
+      description:"This is the sauce that started it all. Made with vine ripened tomatoes and sweetened naturally with dates, this award-winning tomato ketchup is full of flavour without the sugar. Slather on chips, use as a marinade, or add a dollop to your favourite recipe; our sauces are naturally versatile.",
+      packSize:'250g', images:['assets/products/dr-wills-packshot-tomato-ketchup.png'],
+      // DATA NOTE: description says "full of flavour without the sugar" while nutrition shows naturally
+      // occurring sugars from dates and date syrup — retain approved description, confirm claim language
+      // before production. Do not label this product "sugar free".
+      ingredientsHtml:'Tomato Paste (35.5%), Tomatoes (21%), Apple Vinegar, Date Syrup, Onion, Bramley Apple Puree, Garlic Puree, Spices, Salt, Ginger Puree, Chicory Root Fibre, Natural Colour: Paprika Extract.',
+      allergenHtml:null,
+      nutritionHeaders:['Nutrition (Typical)','Per 100g','Per 15g'],
+      nutrition:{ per100:{kj:365,kcal:86,fat:'0.3g',sat:'<0.1g',carb:'17.2g',sugar:'16.2g',protein:'2.7g',salt:'0.39g'},
+                  perServ:{kj:55,kcal:13,fat:'<0.1g',sat:'0.0g',carb:'2.6g',sugar:'2.4g',protein:'0.4g',salt:'0.06g'} },
+      goodToKnow:[{t:'Sweetened with date syrup'},{t:'Made with vine-ripened tomatoes'},{t:'250g bottle'},{t:'Naturally versatile'}],
+      accent:'var(--f-ketchup)'
+    },
+    {
+      id:'barbecue-sauce', category:'table-sauces', name:"Dr. Will's Barbecue Sauce",
+      rating:5, reviewCount:43, tagline:'SWEET, STICKY AND SMOKEY.',
+      // Source description kept verbatim for accuracy. "Drop that chemical nonsense" is intentionally
+      // scoped to this product's own description only — not reused elsewhere on the landing page.
+      description:"Drop that chemical nonsense & get this sauce all up in your grill. A great British sauce for the great British barbecue. With two Great Taste Awards, this sweet, sticky & smokey barbecue sauce is the perfect condiment for your favourite foods. Spread as a pizza base, as a dip for wings or add a dollop to your favourite recipe; our sauces are naturally versatile.",
+      packSize:'250g', images:['assets/products/dr-wills-packshot-bbq-sauce.png'],
+      ingredientsHtml:'Tomatoes (26.5%), Tomato Paste (16%), Date Syrup, Apple Vinegar, Red Pepper, Onion, Water, Bramley Apple Puree, Spices (<b>Mustard</b>), Garlic Puree, Ginger Puree, Naturally Smoked Water, Cornflour, <b>Soy</b> Beans, Naturally Smoked Sunflower Oil, Rice, White Vinegar.',
+      allergenHtml:'Allergens shown in bold. Contains mustard and soy.',
+      nutritionHeaders:['Nutrition (Typical)','Per 100g','Per 15g'],
+      // DATA NOTE: source screenshot shows "Of which sugars*" with an asterisk but the footnote text
+      // was not visible — confirm the footnote before production.
+      nutrition:{ per100:{kj:426,kcal:100,fat:'0.9g',sat:'0.2g',carb:'20.0g',sugar:'15.4g*',protein:'2.4g',salt:'0.5g'},
+                  perServ:{kj:64,kcal:15,fat:'0.1g',sat:'<0.1g',carb:'3.0g',sugar:'2.3g*',protein:'0.4g',salt:'0.08g'} },
+      goodToKnow:[{t:'Sweetened with date syrup'},{t:'Two Great Taste Awards'},{t:'Contains mustard',a:true},{t:'Contains soy',a:true}],
+      accent:'var(--f-bbq)'
+    },
+    {
+      id:'buffalo-hot-sauce', category:'hot-sauces', name:"Dr. Will's Buffalo Hot Sauce",
+      rating:4.5, reviewCount:15, tagline:'ZINGY, SPICY AND READY FOR ANYTHING.',
+      description:"Zingy, spicy & an all-round buff-ting of a sauce. Hot sauce just got hotter. Made with habanero chillies this buffalo hot sauce will keep you coming back for more. Tangy, spicy and full of flavour, this sauce is perfect for drizzling, glazing & dipping. Drizzle over dinner, use as a taco topper, as a marinade or add a dollop to your favourite recipe; our sauces are naturally versatile.",
+      packSize:'148g', images:['assets/products/dr-wills-packshot-buffalo-hot.png'],
+      ingredientsHtml:'Rapeseed Oil, White Grape Vinegar (<b>Sulphites</b>), Habanero Chilli Purée (7%), Tomato Paste, Pea Protein, Tapioca Starch, Salt, Smoked Paprika, Garlic Powder, Natural Colour: Paprika Extract, Cornflour, Ground Cayenne.',
+      allergenHtml:'Allergens shown in bold. Contains sulphites.',
+      nutritionHeaders:['Nutrition (Typical)','Per 100g','Per 15g'],
+      nutrition:{ per100:{kj:1649,kcal:400,fat:'41.1g',sat:'3.0g',carb:'5.6g',sugar:'1.3g',protein:'1.2g',salt:'2.41g'},
+                  perServ:{kj:247,kcal:60,fat:'6.2g',sat:'0.5g',carb:'0.8g',sugar:'0.2g',protein:'0.2g',salt:'0.36g'} },
+      goodToKnow:[{t:'Made with habanero chilli purée'},{t:'Tangy and spicy'},{t:'Contains sulphites',a:true},{t:'148g bottle'}],
+      accent:'var(--f-buffalo)'
+    },
+    {
+      id:'sriracha-hot-sauce', category:'hot-sauces', name:"Dr. Will's Sriracha Hot Sauce",
+      rating:4, reviewCount:27, tagline:'REAL HEAT. ACTUAL FLAVOUR.',
+      description:"We're hot, we're cute, we're all natural to boot! Fermented chillies give this hot sauce a sweet kick, an incredible colour and an even better flavour. Free from sugar and made with all natural ingredients, this hot sauce will be your new go to. Drizzle over noodles, as a glaze for tofu or add a dollop to your favourite recipe; our sauces are naturally versatile.",
+      packSize:'270g', images:['assets/products/dr-wills-packshot-sriracha.png'],
+      ingredientsHtml:'Red Pepper (36%), Water, Date Syrup, Spirit Vinegar, Garlic Puree, Habanero Chilli Puree (5.5%), Cornflour, Salt.',
+      allergenHtml:null,
+      nutritionHeaders:['Nutrition (Typical)','Per 100g','Per 15g'],
+      // DATA NOTE: supplied source shows ">0.1g" for per-serving fat and saturates — unusual but
+      // retained exactly; confirm these two values against approved packaging/backend data before production.
+      nutrition:{ per100:{kj:335,kcal:80,fat:'0.2g',sat:'0.1g',carb:'16.9g',sugar:'10.7g',protein:'1.6g',salt:'0.95g'},
+                  perServ:{kj:50,kcal:12,fat:'&gt;0.1g',sat:'&gt;0.1g',carb:'2.5g',sugar:'1.6g',protein:'0.2g',salt:'0.14g'} },
+      goodToKnow:[{t:'Made with red pepper'},{t:'Made with habanero chilli purée'},{t:'Sweetened with date syrup'},{t:'270g bottle'}],
+      accent:'var(--f-sriracha)'
+    },
+    {
+      id:'classic-mayo', category:'mayos', name:"Dr. Will's Classic Mayo",
+      rating:5, reviewCount:26, tagline:'SIMPLE. CREAMY. PROPER MAYO.',
+      description:"Our classic mayo, made with only eight ingredients, all of which you'd find in your kitchen cupboard. Simple, but delicious. With two Great Taste Awards, this mayo tastes as good as it looks.",
+      packSize:'170g', images:['assets/products/dr-wills-packshot-classic-mayo.png'],
+      ingredientsHtml:'Rapeseed Oil (77.5%), Free Range Pasteurised <b>Egg</b> Yolk, Water, Apple Vinegar, Spices (<b>Mustard</b>), Salt, Concentrated Lemon Juice, White Vinegar.',
+      allergenHtml:'Allergens shown in bold. Contains egg and mustard.',
+      nutritionHeaders:['Nutrition (Typical)','Per 100g','Per 14g'],
+      nutrition:{ per100:{kj:3040,kcal:739,fat:'81.0g',sat:'7.9g',carb:'0.4g',sugar:'0.1g',protein:'1.9g',salt:'0.66g'},
+                  perServ:{kj:426,kcal:103,fat:'11.3g',sat:'1.1g',carb:'<0.1g',sugar:'<0.1g',protein:'0.3g',salt:'0.09g'} },
+      goodToKnow:[{t:'Made with eight ingredients'},{t:'Free-range egg yolk'},{t:'Two Great Taste Awards'},{t:'Contains egg and mustard',a:true}],
+      accent:'var(--f-classic)'
+    },
+    {
+      id:'olive-oil-mayonnaise', category:'mayos', name:"Dr. Will's Olive Oil Mayonnaise",
+      rating:5, reviewCount:6, tagline:'MAYONNAISE WITH A MEDITERRANEAN TWIST.',
+      // Claim note: "seed oil free" applies to this product only — not generalised range-wide.
+      description:"Mayonnaise with a Mediterranean twist? Don't mind if we do! Made with a blend of Olive Oil and Extra Virgin Olive Oil, this mayonnaise packs a punch — all natural and seed oil free.",
+      packSize:'175g', images:['assets/products/dr-wills-packshot-olive-oil-mayo.png'],
+      ingredientsHtml:'Olive Oil (69%), Free Range Pasteurised <b>Egg</b> Yolk (11%), Extra Virgin Olive Oil (8%), Water, Apple Vinegar, Concentrated Lemon Juice, Salt, <b>Mustard</b>, White Pepper.',
+      allergenHtml:'Allergens shown in bold. Contains egg and mustard.',
+      nutritionHeaders:['Nutrition (Typical)','Per 100g','Per 14g'],
+      nutrition:{ per100:{kj:3006,kcal:732,fat:'80.1g',sat:'11.7g',carb:'0.4g',sugar:'0.1g',protein:'1.9g',salt:'0.52g'},
+                  perServ:{kj:421,kcal:102,fat:'11.2g',sat:'1.6g',carb:'<0.1g',sugar:'<0.1g',protein:'0.3g',salt:'0.07g'} },
+      goodToKnow:[{t:'69% olive oil'},{t:'8% extra virgin olive oil'},{t:'Free-range egg yolk'},{t:'Contains egg and mustard',a:true}],
+      accent:'var(--f-olive)'
+    },
+    {
+      id:'avocado-oil-mayonnaise', category:'mayos', name:"Dr. Will's Avocado Oil Mayonnaise",
+      rating:4.5, reviewCount:45, tagline:'RICH. CREAMY. MADE WITH AVOCADO OIL.',
+      // Claim note: "Made with 100% avocado oil" refers to the type of oil used, not the whole product
+      // being 100% oil (ingredients show 79%) — do not rewrite as "the product is 100% avocado oil".
+      description:"This mayo will be all you've avo wanted. Made with 100% avocado oil, this jar has the equivalent of 8 avocados inside! Made with all natural ingredients, we are confident that once you've tried this mayonnaise, you'll wonder how you ever managed without it.",
+      packSize:'175g', images:['assets/products/dr-wills-packshot-avocado-oil-mayo.png'],
+      ingredientsHtml:'Avocado Oil (79%), Free Range <b>Egg</b> Yolk, Water, Apple Vinegar, Concentrated Lemon Juice, Salt, <b>Mustard</b> Flour, White Pepper, White Vinegar.',
+      allergenHtml:'Allergens shown in bold. Contains egg and mustard.',
+      nutritionHeaders:['Nutrition (Typical)','Per 100g','Per 14g'],
+      nutrition:{ per100:{kj:3106,kcal:755,fat:'82.8g',sat:'15.2g',carb:'0.4g',sugar:'0.1g',protein:'1.9g',salt:'0.61g'},
+                  perServ:{kj:435,kcal:106,fat:'11.6g',sat:'2.1g',carb:'<0.1g',sugar:'<0.1g',protein:'0.3g',salt:'0.09g'} },
+      goodToKnow:[{t:'Made with avocado oil'},{t:'79% avocado oil'},{t:'Free-range egg yolk'},{t:'Contains egg and mustard',a:true}],
+      accent:'var(--f-avocado)'
+    },
+    {
+      id:'sriracha-mayo', category:'mayos', name:"Dr. Will's Sriracha Mayo",
+      rating:0, reviewCount:0, tagline:'SPICY, CREAMY, DREAMY.',
+      description:"Spicy, creamy, dreamy. Warning: may cause spontaneous dance moves! Probably the best mayo you've ever tasted. Honestly. Made with habanero chillies to give you a smooth & spicy taste. Drizzle over dinner, mix into a dish, or just dunk your chips in; our sauces are naturally versatile.",
+      packSize:'170g', images:['assets/products/dr-wills-packshot-sriracha-mayo.png'],
+      ingredientsHtml:'Rapeseed Oil (63%), Free Range, Pasteurised <b>Egg</b> Yolk (11%), Red Pepper Puree, Garlic Puree, Apple Vinegar, Date Syrup, Water, Habanero Chilli Puree (1.2%), Concentrated Lemon Juice, Salt, Dijon <b>Mustard</b> (Water, <b>Mustard</b> Seed, Spirit Vinegar, Salt), <b>Mustard</b> Bran, White Pepper, Colour: Paprika Extract.',
+      allergenHtml:'Allergens shown in bold. Contains egg and mustard.',
+      nutritionHeaders:['Nutrition (Typical)','Per 100g','Per 14g'],
+      // DATA NOTE: source code contained hidden data-th attributes referencing 15g while the visible
+      // table heading says 14g — the visible 14g heading is used here; confirm serving size before production.
+      nutrition:{ per100:{kj:2570,kcal:624,fat:'66.4g',sat:'5.4g',carb:'4.0g',sugar:'2.6g',protein:'2.5g',salt:'0.71g'},
+                  perServ:{kj:360,kcal:87,fat:'9.3g',sat:'0.8g',carb:'0.6g',sugar:'0.4g',protein:'0.3g',salt:'0.10g'} },
+      goodToKnow:[{t:'Free-range egg yolk'},{t:'Made with habanero chillies'},{t:'Contains egg',a:true},{t:'Contains mustard',a:true}],
+      accent:'var(--f-srirachamayo)'
+    },
+    {
+      id:'chipotle-ranch-dressing', category:'dressings', name:"Dr. Will's Chipotle Ranch Dressing",
+      rating:null, reviewCount:null, tagline:'DRESSED TO IMPRESS WITH A LITTLE SMOKY FLEX.',
+      description:"This creamy & versatile dressing has the freshness of a ranch with a subtle smokey warmth. Drizzle over corn on the cob, elevate your chicken salad to new heights or even just use it as a dip for your wedges.",
+      packSize:null, images:['assets/products/dr-wills-packshot-chipotle-ranch-dressing.png'],
+      ingredientsHtml:'Rapeseed Oil, Water, Lemon Juice, Apple Vinegar, Tomato Paste, Date Syrup, Tapioca Starch, Pea Protein, Salt, <b>Mustard Flour</b>, Chipotle Chilli Powder (0.6%), Cornflour, <b>Mustard Bran</b>, Smoked Paprika, Garlic Powder, Parsley, Coriander, Thyme, Chive, White Pepper.',
+      allergenHtml:'Free From Cereals Containing Gluten. Contains Mustard.',
+      nutritionHeaders:['Nutrition (Typical)','Per 100g','Per serving'],
+      // DATA NOTE: rating, review count, pack size, serving size and nutritional values are not yet
+      // confirmed for this SKU — do not invent, show "to be confirmed" states instead.
+      nutrition:null,
+      goodToKnow:[{t:'Contains date syrup'},{t:'Contains mustard',a:true},{t:'Free from cereals containing gluten'},{t:'Smoky chipotle flavour'}],
+      accent:'var(--f-chipotle)'
+    }
+  ];
+
+  var CATS={'table-sauces':'Table Sauce','mayos':'Mayonnaise','hot-sauces':'Hot Sauce','dressings':'Dressing'};
+
+  var filtersHost=document.getElementById('expFilters'),
+      pillsHost=document.getElementById('expPills'),
+      frame=document.getElementById('expFrame'),
+      img=document.getElementById('expImg'),
+      gPrev=document.getElementById('expPrev'),
+      gNext=document.getElementById('expNext'),
+      gDots=document.getElementById('expDots'),
+      catEl=document.getElementById('expCat'),
+      nameEl=document.getElementById('expName'),
+      ratingEl=document.getElementById('expRating'),
+      taglineEl=document.getElementById('expTagline'),
+      descEl=document.getElementById('expDesc'),
+      packEl=document.getElementById('expPack'),
+      gtkEl=document.getElementById('expGtk'),
+      accIng=document.getElementById('expAccIng'),
+      accNut=document.getElementById('expAccNut'),
+      ingBody=document.getElementById('expIngBody'),
+      nutBody=document.getElementById('expNutBody');
+  if(!pillsHost) return;
+
+  var activeCat='all', activeId='tomato-ketchup', imgIndex=0;
+
+  function starWidget(rating,count){
+    if(count===0) return '<span class="exp-rating-tbc">No reviews yet</span>';
+    if(rating===null||rating===undefined) return '<span class="exp-rating-tbc">Reviews to be confirmed</span>';
+    var pct=Math.round((rating/5)*100);
+    return '<span class="stars" style="background:linear-gradient(90deg,var(--pink-deep) '+pct+'%,#ccc '+pct+'%);'+
+           '-webkit-background-clip:text;background-clip:text;color:transparent" aria-hidden="true">★★★★★</span>'+
+           '<span class="rc-count">'+rating+' ('+count+' review'+(count===1?'':'s')+')</span>';
+  }
+
+  function nutritionTable(p){
+    if(!p.nutrition) return '<p class="exp-tbc">Nutritional information to be confirmed.</p>';
+    var h=p.nutritionHeaders, per100=p.nutrition.per100, perServ=p.nutrition.perServ;
+    var rows=[
+      ['Energy', per100.kj+' kJ / '+per100.kcal+' kcal', perServ.kj+' kJ / '+perServ.kcal+' kcal'],
+      ['Fat', per100.fat, perServ.fat],
+      ['of which saturates', per100.sat, perServ.sat],
+      ['Carbohydrate', per100.carb, perServ.carb],
+      ['of which sugars', per100.sugar, perServ.sugar],
+      ['Protein', per100.protein, perServ.protein],
+      ['Salt', per100.salt, perServ.salt]
+    ];
+    var html='<div class="exp-nutri-wrap"><table class="nutri"><caption>'+h[0]+'</caption>'+
+      '<thead><tr><th scope="col">&nbsp;</th><th scope="col">'+h[1]+'</th><th scope="col">'+h[2]+'</th></tr></thead><tbody>';
+    rows.forEach(function(r){ html+='<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td></tr>'; });
+    html+='</tbody></table></div>';
+    return html;
+  }
+
+  function gtkChips(list){
+    if(!list||!list.length) return TBC;
+    return '<ul class="exp-gtk-list">'+list.map(function(g){
+      return '<li'+(g.a?' class="info"':'')+'>'+(g.a?'<span aria-hidden="true">ⓘ </span>':'')+g.t+'</li>';
+    }).join('')+'</ul>';
+  }
+
+  // build product selector pills once
+  PRODUCTS.forEach(function(p){
+    var b=document.createElement('button');
+    b.type='button'; b.className='exp-pill'; b.dataset.id=p.id; b.dataset.cat=p.category;
+    b.style.setProperty('--pc',p.accent);
+    b.setAttribute('aria-pressed', p.id===activeId?'true':'false');
+    b.textContent=p.name.replace("Dr. Will's ",'');
+    b.addEventListener('click',function(){ select(p.id); });
+    pillsHost.appendChild(b);
+  });
+  var pills=pillsHost.querySelectorAll('.exp-pill');
+
+  function filterPills(){
+    var anyVisible=false, activeStillVisible=false;
+    pills.forEach(function(b){
+      var show = activeCat==='all' || b.dataset.cat===activeCat;
+      b.classList.toggle('hidden', !show);
+      if(show){ anyVisible=true; if(b.dataset.id===activeId) activeStillVisible=true; }
+    });
+    if(!activeStillVisible){
+      var firstVisible=PRODUCTS.find(function(p){ return activeCat==='all'||p.category===activeCat; });
+      if(firstVisible) select(firstVisible.id);
+    }
+  }
+
+  filtersHost.addEventListener('click',function(e){
+    var b=e.target.closest('.filter-btn'); if(!b) return;
+    Array.prototype.forEach.call(filtersHost.querySelectorAll('.filter-btn'),function(fb){ fb.setAttribute('aria-pressed', fb===b?'true':'false'); });
+    activeCat=b.dataset.cat;
+    filterPills();
+  });
+
+  function buildGalleryDots(p){
+    gDots.innerHTML='';
+    if(p.images.length<=1){ gDots.hidden=true; gPrev.hidden=true; gNext.hidden=true; return; }
+    gDots.hidden=false; gPrev.hidden=false; gNext.hidden=false;
+    p.images.forEach(function(_,i){
+      var d=document.createElement('button'); d.type='button'; d.setAttribute('aria-label','Image '+(i+1)+' of '+p.images.length);
+      d.addEventListener('click',function(){ imgIndex=i; renderImage(p); });
+      gDots.appendChild(d);
+    });
+  }
+  function renderImage(p){
+    var dots=gDots.querySelectorAll('button');
+    dots.forEach(function(d,i){ d.classList.toggle('on', i===imgIndex); });
+    img.style.opacity='0';
+    setTimeout(function(){
+      img.src=p.images[imgIndex]; img.alt=p.name;
+      img.style.opacity='1';
+    }, reduce?0:150);
+  }
+
+  function select(id){
+    var p=PRODUCTS.find(function(x){ return x.id===id; });
+    if(!p) return;
+    activeId=id; imgIndex=0;
+
+    pills.forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.id===id?'true':'false'); });
+    // Horizontal-only: scroll the pill INTO the pills strip without ever scrolling the page
+    // vertically (scrollIntoView's block:'nearest' still scrolls the page on load, when the
+    // strip itself is off-screen — that previously caused the whole page to jump on init).
+    var activePill=pillsHost.querySelector('.exp-pill[data-id="'+id+'"]');
+    if(activePill){
+      var target=activePill.offsetLeft - (pillsHost.clientWidth - activePill.offsetWidth)/2;
+      pillsHost.scrollTo({left:Math.max(0,target),behavior:reduce?'auto':'smooth'});
+    }
+
+    frame.style.setProperty('--acc', p.accent);
+    catEl.style.setProperty('--pc', p.accent);
+    catEl.textContent = CATS[p.category] || '';
+    nameEl.textContent = p.name;
+    ratingEl.innerHTML = starWidget(p.rating, p.reviewCount);
+    ratingEl.setAttribute('aria-label', (p.rating!=null? p.rating+' out of 5 stars, '+p.reviewCount+' reviews' : 'Reviews to be confirmed'));
+    taglineEl.textContent = p.tagline;
+    descEl.textContent = p.description;
+    packEl.textContent = 'Pack size: '+(p.packSize || 'To be confirmed');
+    gtkEl.innerHTML = gtkChips(p.goodToKnow);
+
+    ingBody.innerHTML = p.ingredientsHtml + (p.allergenHtml ? '<span class="exp-allergen-note">'+p.allergenHtml+'</span>' : '');
+    nutBody.innerHTML = nutritionTable(p);
+
+    // close Ingredients/Nutrition when switching products (avoids stale expanded content);
+    // Good to Know stays open by default, matching the approved reference layout.
+    accIng.open=false; accNut.open=false;
+
+    gPrev.setAttribute('aria-label','Previous image for '+p.name);
+    gNext.setAttribute('aria-label','Next image for '+p.name);
+    buildGalleryDots(p);
+    renderImage(p);
+  }
+
+  gPrev.addEventListener('click',function(){
+    var p=PRODUCTS.find(function(x){ return x.id===activeId; });
+    imgIndex=(imgIndex-1+p.images.length)%p.images.length; renderImage(p);
+  });
+  gNext.addEventListener('click',function(){
+    var p=PRODUCTS.find(function(x){ return x.id===activeId; });
+    imgIndex=(imgIndex+1)%p.images.length; renderImage(p);
+  });
+
+  // initial state: ALL active, Tomato Ketchup selected, both accordions closed
+  select('tomato-ketchup');
+})();
+</script>
+
+<script>
+/* ============================================================
+   SECTION 1 — OFFER BAR COUNTDOWN
+   Self-contained; does not touch the other script blocks.
+   ============================================================ */
+(function(){
+  'use strict';
+
+  // Clearly labelled end date for the offer countdown. Placeholder value only,
+  // update this to the real campaign deadline before production.
+  var OFFER_END_DATE = new Date('2026-08-01T23:59:59');
+
+  var elDays=document.getElementById('obDays'),
+      elHrs=document.getElementById('obHrs'),
+      elMin=document.getElementById('obMin'),
+      elSec=document.getElementById('obSec');
+  if(!elDays) return;
+
+  function pad(n){ n=Math.max(0,n); return n<10 ? '0'+n : ''+n; }
+
+  var intervalId;
+  function tick(){
+    var diff=OFFER_END_DATE.getTime()-Date.now();
+    if(diff<=0){
+      elDays.textContent='00'; elHrs.textContent='00'; elMin.textContent='00'; elSec.textContent='00';
+      clearInterval(intervalId);
+      return;
+    }
+    var totalSec=Math.floor(diff/1000);
+    elDays.textContent=pad(Math.floor(totalSec/86400));
+    elHrs.textContent=pad(Math.floor((totalSec%86400)/3600));
+    elMin.textContent=pad(Math.floor((totalSec%3600)/60));
+    elSec.textContent=pad(totalSec%60);
+  }
+  tick();
+  intervalId=setInterval(tick,1000);
+})();
+</script>
+
+<!-- GSAP + ScrollTrigger: powers the pinned horizontal founder-story scroll above 1024px only. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+/* ============================================================
+   SECTION 7 — FOUNDER STORY: pinned, scroll-driven horizontal track.
+   Desktop only (>1024px), via GSAP ScrollTrigger.matchMedia — which
+   kills the tween/ScrollTrigger (and its runtime-generated pin spacer)
+   whenever the breakpoint is left, so nothing is left stale in the DOM
+   and no duplicate triggers get created on resize. Below 1024px, OR
+   whenever prefers-reduced-motion is set (at any width), the section
+   falls back to a plain vertical stack via the ".fs-no-motion" class
+   / the max-width:1024px CSS — no ScrollTrigger is created at all.
+
+   #fsStage is the pinned trigger (heading stays visible while the
+   track moves). #fsTrackH is the only horizontally-transformed
+   element — it is never also the pin target.
+   ============================================================ */
+(function(){
+  'use strict';
+  var section=document.getElementById('founder-story');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(reduce){ if(section) section.classList.add('fs-no-motion'); return; }
+  if(typeof gsap==='undefined' || typeof ScrollTrigger==='undefined') return;
+  gsap.registerPlugin(ScrollTrigger);
+  var stage=document.getElementById('fsStage'), track=document.getElementById('fsTrackH');
+  if(!stage||!track) return;
+
+  var mm=gsap.matchMedia();
+  mm.add('(min-width:1025px)', function(){
+    // Clear any transform left on the track before (re)initialising, and make sure this
+    // trigger's own previous instance (if any) is gone before creating a fresh one.
+    ScrollTrigger.getAll().forEach(function(t){ if(t.vars.trigger===stage) t.kill(); });
+    gsap.set(track, { clearProps:'transform' });
+
+    var tween=gsap.to(track,{
+      x:function(){ return -Math.max(0, track.scrollWidth - stage.clientWidth); },
+      ease:'none',
+      scrollTrigger:{
+        trigger:stage,
+        start:'top top',
+        end:function(){ return '+=' + Math.max(0, track.scrollWidth - stage.clientWidth); },
+        pin:stage,
+        scrub:0.8,
+        anticipatePin:1,
+        pinSpacing:true,
+        invalidateOnRefresh:true
+      }
+    });
+
+    return function(){
+      tween.scrollTrigger && tween.scrollTrigger.kill();
+      tween.kill();
+      gsap.set(track, { clearProps:'transform' });
+    };
+  });
+
+  // Let ScrollTrigger settle once fonts/layout have fully resolved (Adobe Fonts swap can
+  // shift heading/panel heights after first paint).
+  ScrollTrigger.refresh();
+  window.addEventListener('load', function(){ ScrollTrigger.refresh(); });
+})();
+</script>
+</body>
+</html>
